@@ -1,0 +1,34 @@
+import type { z } from "@hono/zod-openapi";
+
+export type ZodSchema = z.ZodUnion | z.ZodObject | z.ZodArray<z.ZodObject>;
+
+
+const jsonContent = <
+  T extends ZodSchema,
+>(schema: T,
+  description: string,
+) => {
+  return {
+    content: {
+      "application/json": {
+        schema,
+      },
+    },
+    description,
+  };
+};
+
+
+export const jsonContentRequired = <
+  T extends ZodSchema,
+>(schema: T,
+  description: string,
+) => {
+  return {
+    ...jsonContent(schema, description),
+    required: true,
+  };
+};
+
+
+export default jsonContent;
