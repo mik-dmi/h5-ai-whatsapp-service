@@ -10,7 +10,7 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	const messageTemplateData = c.req.valid("json");
 	
-	c.var.logger.debug({ messageTemplateData }, "createMessageTemplate called");
+	//c.var.logger.debug({ messageTemplateData }, "createMessageTemplate called");
 
 	//in rpoduction sends the message to the provided Phone Number; in development send it to the set Phone Number 
 
@@ -27,8 +27,7 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 			to: `whatsapp:${whatsappNumberTo}`,
 		});
 
-		c.var.logger.debug("HERRREEEE !!!");
-		c.var.logger.debug(response);
+		c.var.logger.debug("Twilio response to create message: %s ", response.status);
 		return c.json({
 			status:  response.status,
 			body: response.body,
