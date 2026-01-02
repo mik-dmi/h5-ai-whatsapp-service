@@ -3,31 +3,45 @@ import { z, ZodError } from "zod";
 
 
 
-const EnvSchema = z.object({
-  	NODE_ENV: z.enum(["development", "production"]).default("development"),
-	LOG_LEVEL: z.enum(["fatal" , "error" , "warn" , "info" , "debug" , "trace"]),
-	TWILIO_ACCOUNT_SID:z.string(),
-	TWILIO_AUTH_TOKEN:z.string(),
-	TWILIO_PHONE_NUMBER: z.string(),
-	PRISM_URL: z.url().optional(),
-	TEST_TWILIO_PHONE_NUMBER: z.string().optional(),
-	CONTENT_SIT_CREATE_MESSAGE: z.string(),
-
-}).superRefine((input, ctx) => {
-  if (input.NODE_ENV != "production" && !input.PRISM_URL) {
-    ctx.addIssue({
-      code: "invalid_type",
-      expected: "string",
-      received: "undefined",
-      path: ["PRISM_URL"],
-      message: "Must be set when NODE_ENV is 'development'",
-    });
-  }
+const BaseEnvSchema = z.object({
+  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
+  TWILIO_ACCOUNT_SID: z.string(),
+  TWILIO_AUTH_TOKEN: z.string(),
+  TWILIO_PHONE_NUMBER: z.string(),
+  CONTENT_SIT_CREATE_MESSAGE: z.string(),
 });
 
-export type serverEnv = z.infer<typeof EnvSchema>;
+const DevEnvSchema = BaseEnvSchema.extend({
+  NODE_ENV: z.literal("development"),
+  PRISM_URL: z.string().url(),
+  TEST_TWILIO_PHONE_NUMBER: z.string(),
+});
+
+const ProdEnvSchema = BaseEnvSchema.extend({
+  NODE_ENV: z.literal("production"),
+  PRISM_URL: z.string().url().optional(),
+  TEST_TWILIO_PHONE_NUMBER: z.string().optional(),
+});
+
+export const EnvSchema = z.discriminatedUnion("NODE_ENV", [
+  DevEnvSchema,
+  ProdEnvSchema,
+]);
+
+export type ServerEnv = z.infer<typeof EnvSchema>;
 
 
+const { data: env, error } = EnvSchema.safeParse(process.env);
+
+if (error) {
+  console.error("Invalid env:");
+  console.error(JSON.stringify(error.flatten().fieldErrors, null, 2));
+  process.exit(1);
+}
+
+export default env!;
+
+/*
 let serverEnv :serverEnv 
 
 try{
@@ -44,3 +58,4 @@ catch(e){
 
 
 export default serverEnv;
+*/

@@ -3,12 +3,18 @@ import { ListRoutes } from "./internal-h5.routes";
 import { AppBindings } from "@/types/types";
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { stringify } from "querystring";
+import RestExceptionError from "twilio/lib/base/RestException"
+import { RestException } from "twilio";
+import { createTwilioMessage } from "@/app/internal/services/twilio/create-message/create";
+
 
 type AppRouteHandler< R extends RouteConfig > = RouteHandler<R , AppBindings>
 
 export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	const messageTemplateData = c.req.valid("json");
+	const twilioClient = c.var.twilioClient
+
 	
 	//c.var.logger.debug({ messageTemplateData }, "createMessageTemplate called");
 
@@ -17,45 +23,43 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 	const whatsappNumberTo =  serverEnv.NODE_ENV === "production" ?  messageTemplateData.phone_number :  serverEnv.TEST_TWILIO_PHONE_NUMBER;
 
 
+
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
 
 	try {
-		const response = await c.var.twilioClient.messages.create({
-			from: `whatsapp:${serverEnv.TWILIO_PHONE_NUMBER}`,
-			contentSid: serverEnv.CONTENT_SIT_CREATE_MESSAGE, // (also check spelling)
-			contentVariables: '{"1":"12/1","2":"3pm"}',
-			to: `whatsapp:${whatsappNumberTo}`,
-		});
+		const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
-		c.var.logger.debug("Twilio response to create message: %s ", response.status);
+		c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
 		return c.json({
-			status:  response.status,
-			body: response.body,
+			status:   response.payload.status,
+			body: response.payload.body,
 		}, 200)
 
 		
-		} catch (err: any ) {
-			c.var.logger.error(
-    {
-      message: err.message,
-      status: err.status,
-      code: err.code,
-      moreInfo: err.moreInfo,
-      details: err.details,
-      twilioError: err,
-    },
-    "Twilio message create failed"
-  );
-			return c.json(
-				{
-				message: stringify(err),
-				
-				},
-				500
-			); 
+		} catch (err: unknown) {
+			if (err instanceof RestException) {
+				c.var.logger.error(
+					{
+					message: err.message,
+					status: err.status,
+					code: err.code,
+					moreInfo: err.moreInfo,
+					details: err.details,
+					},
+					"Twilio REST API call failed"
+				);
+
+				// matches Twilio docs error shape
+				return c.json(
+					{
+					status: err.status,
+					code: err.code,
+					message: err.message,
+					more_info: err.moreInfo,
+					details: err.details,
+					},
+					err.status ?? "500"
+				);
+			}
 		}
-	
-	
-}
-
-
+	}
