@@ -1,11 +1,6 @@
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { Twilio } from "twilio";
 import { TwilioServerError, UnableToCreateMessageError } from "./schema";
-import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
-import { error } from "console";
-
-
-
 
 export async function createTwilioMessage(twilioClient : Twilio , whatsappNumberTo : string ){
 
@@ -18,11 +13,12 @@ export async function createTwilioMessage(twilioClient : Twilio , whatsappNumber
 
 	if (response.status === "failed"  || response.status === "undelivered" ) {
 
+
 		if( response.errorCode >= 400 && response.errorCode < 500){
-        	throw new UnableToCreateMessageError(  response.status, response.body , response.errorCode , response.errorMessage);
+        	throw new UnableToCreateMessageError(  response.status, response.errorCode , response.errorMessage);
 		}
 
-		throw new TwilioServerError(response.status, response.body , response.errorCode , response.errorMessage);
+		throw new TwilioServerError(response.status , response.errorCode , response.errorMessage);
 
 	}
 

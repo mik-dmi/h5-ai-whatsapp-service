@@ -1,6 +1,6 @@
 import  jsonContent, { jsonContentRequired } from "@/app/internal/shared/utils/json-content";
 import { createRoute, z } from "@hono/zod-openapi";
-import { CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema, MessageStatusSchema, ValidationErrorSchema } from "./schema";
+import { BadRequestSchema, CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema, MessageStatusSchema, ValidationErrorSchema } from "./schema";
 import { InternalErrorSchema } from "@/types/types";
 
 const tags = ["Internal H5"];
@@ -19,10 +19,15 @@ export  const list = createRoute({
 	200: jsonContent( CreateMessageTemplateResponseSchema,
 		 "Endpoint to create Messages"
 	),
-  422: 
-  jsonContent( ValidationErrorSchema,
+  400: 
+  jsonContent( BadRequestSchema,
 		 "The validation error(s)",
 	),
+  422: 
+  jsonContent(ValidationErrorSchema, 
+    "Zod validation errors"
+  ),
+
   500: 
   jsonContent( InternalErrorSchema,
 		 "Any other error(s)",

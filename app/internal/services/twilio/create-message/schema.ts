@@ -4,28 +4,27 @@ import {MessageStatus}  from "twilio/lib/rest/api/v2010/account/message"
 
 
 export class TwilioErrors extends Error {
-	statusCode: ContentfulStatusCode; // the code that will be returned to the client 
+	status: ContentfulStatusCode; // the code that will be returned to the client 
 	statusRequestCodeTwilio: number; // the code that come from twilio API
-	status : MessageStatus ;
+	twilioStatus : MessageStatus ;
 
-    constructor(message: string, statusRequestCodeTwilio: number , status : MessageStatus, statusCode: ContentfulStatusCode) {
+    constructor(message: string, statusRequestCodeTwilio: number , twilioStatus : MessageStatus, status: ContentfulStatusCode) {
         super(message);
-		this.statusCode = statusCode;
-		this.status =  status;
+		this.status = status;
+		this.twilioStatus =  twilioStatus;
         this.name = 'ThirdPartyMessagingAPIError';
         this.statusRequestCodeTwilio = statusRequestCodeTwilio;
     }
 }
 
 export class UnableToCreateMessageError extends TwilioErrors {
-    constructor( twilioMessageStatus : MessageStatus, body: string , errorCode : number , errorMessage: string ) {
-        super(errorMessage ?? 'Message not created', errorCode , twilioMessageStatus , 400 );
-    }
+  constructor(twilioMessageStatus: MessageStatus, errorCode: number, errorMessage?: string) {
+    super(errorMessage ?? "Message not created", errorCode, twilioMessageStatus, 400);
+  }
 }
 
-
 export class TwilioServerError extends TwilioErrors {
-    constructor( twilioMessageStatus : MessageStatus, body: string , errorCode : number , errorMessage: string ) {
-        super(errorMessage ?? 'Third party server error', errorCode , twilioMessageStatus , 500 );
-    }
+  constructor(twilioMessageStatus: MessageStatus, errorCode: number, errorMessage?: string) {
+    super(errorMessage ?? "Third party server error", errorCode, twilioMessageStatus, 500);
+  }
 }

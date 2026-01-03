@@ -1,5 +1,5 @@
 import "server-only";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 
 
 
@@ -13,13 +13,13 @@ const BaseEnvSchema = z.object({
 
 const DevEnvSchema = BaseEnvSchema.extend({
   NODE_ENV: z.literal("development"),
-  PRISM_URL: z.string().url(),
+  PRISM_URL: z.url(),
   TEST_TWILIO_PHONE_NUMBER: z.string(),
 });
 
 const ProdEnvSchema = BaseEnvSchema.extend({
   NODE_ENV: z.literal("production"),
-  PRISM_URL: z.string().url().optional(),
+  PRISM_URL: z.url().optional(),
   TEST_TWILIO_PHONE_NUMBER: z.string().optional(),
 });
 

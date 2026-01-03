@@ -2,9 +2,6 @@ import { RouteConfig, RouteHandler } from "@hono/zod-openapi";
 import { ListRoutes } from "./internal-h5.routes";
 import { AppBindings } from "@/types/types";
 import serverEnv from "@/app/internal/shared/env/env.server";
-import { stringify } from "querystring";
-import RestExceptionError from "twilio/lib/base/RestException"
-import { RestException } from "twilio";
 import { createTwilioMessage } from "@/app/internal/services/twilio/create-message/create";
 
 
@@ -14,7 +11,6 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	const messageTemplateData = c.req.valid("json");
 	const twilioClient = c.var.twilioClient
-
 	
 	//c.var.logger.debug({ messageTemplateData }, "createMessageTemplate called");
 
@@ -22,11 +18,9 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	const whatsappNumberTo =  serverEnv.NODE_ENV === "production" ?  messageTemplateData.phone_number :  serverEnv.TEST_TWILIO_PHONE_NUMBER;
 
-
-
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
 
-	try {
+
 		const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
 		c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
@@ -36,7 +30,7 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 		}, 200)
 
 		
-		} catch (err: unknown) {
+		/*} catch (err: unknown) {
 			if (err instanceof RestException) {
 				c.var.logger.error(
 					{
@@ -61,5 +55,5 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 					err.status ?? "500"
 				);
 			}
-		}
+		}*/
 	}

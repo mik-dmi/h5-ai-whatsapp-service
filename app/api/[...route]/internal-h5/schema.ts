@@ -24,6 +24,9 @@ export const CreateMessageTemplateBodySchema = z.object({
   first_name: z.string(),
 });
 
+export const BadRequestSchema = z.object({
+  message: z.string(),
+});
 
 
 export const ValidationErrorSchema = createErrorSchema(CreateMessageTemplateBodySchema);
