@@ -13,16 +13,28 @@ export async function createTwilioMessage(twilioClient : Twilio , whatsappNumber
 
 	if (response.status === "failed"  || response.status === "undelivered" ) {
 
+		const errorCode = response.errorCode ?? 0;
+		
+		const clientErrorCodes = new Set<number>([
+			21211, // invalid 'To' phone number (often)
+			21614, // 'To' number not valid
+			30008, // unknown destination / unreachable / etc (commonly)
+		]);
 
-		if( response.errorCode >= 400 && response.errorCode < 500){
-        	throw new UnableToCreateMessageError(  response.status, response.errorCode , response.errorMessage);
-		}
-
-		throw new TwilioServerError(response.status , response.errorCode , response.errorMessage);
-
+		if (clientErrorCodes.has(errorCode)) {
+			throw new UnableToCreateMessageError(
+				response.status,
+				errorCode,
+				response.errorMessage ?? undefined
+			);
+    	}
+		throw new TwilioServerError(
+			response.status,
+			errorCode,
+			response.errorMessage ?? undefined
+		);
 	}
 
+
 	return {payload:  response}
-
-
 }

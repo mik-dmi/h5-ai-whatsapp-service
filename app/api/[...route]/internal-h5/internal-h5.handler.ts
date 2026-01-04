@@ -20,40 +20,12 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
 
+	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
-		const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
-
-		c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
-		return c.json({
-			status:   response.payload.status,
-			body: response.payload.body,
-		}, 200)
-
-		
-		/*} catch (err: unknown) {
-			if (err instanceof RestException) {
-				c.var.logger.error(
-					{
-					message: err.message,
-					status: err.status,
-					code: err.code,
-					moreInfo: err.moreInfo,
-					details: err.details,
-					},
-					"Twilio REST API call failed"
-				);
-
-				// matches Twilio docs error shape
-				return c.json(
-					{
-					status: err.status,
-					code: err.code,
-					message: err.message,
-					more_info: err.moreInfo,
-					details: err.details,
-					},
-					err.status ?? "500"
-				);
-			}
-		}*/
-	}
+	c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
+	return c.json({
+		success: true,
+		status:   response.payload.status,
+		body: response.payload.body,
+	}, 200)
+}
