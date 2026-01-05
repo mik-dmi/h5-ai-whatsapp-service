@@ -30,6 +30,7 @@ export const BadRequestSchema = z.object({
 
 export const ValidationErrorSchema = createErrorSchema(CreateMessageTemplateBodySchema);
 
+
 export type MessageStatus = typeof messageStatusValues[number];
 
 export const MessageStatusSchema = z.enum(messageStatusValues);
@@ -39,8 +40,6 @@ export const CreateMessageTemplateResponseSchema = z.object({
   status: MessageStatusSchema,
   body: z.string().optional(), // or nullable depending on what you decided
 });
-
-
 
 ////
 
@@ -59,10 +58,5 @@ export const AppErrorResponseSchema = z.object({
   }),
 });
 
-export const TwilioIssueDetailsSchema = z.object({
-  provider: z.literal("twilio"),
-  messageStatus: z.string(),
-  errorCode: z.number().nullable().optional(),
-  errorMessage: z.string().nullable().optional(),
-});
+
 

@@ -20,16 +20,28 @@ export  const list = createRoute({
 	),
   400: 
   jsonContent( AppErrorResponseSchema,
-		 "Bad request errors",
+		 "Bad Request Errors",
+	),
+  403: 
+  jsonContent( AppErrorResponseSchema,
+		 "Forbidden Errors",
+	),
+  404: 
+  jsonContent( AppErrorResponseSchema,
+		 "Not Found Errors",
+	),
+  410: 
+  jsonContent( AppErrorResponseSchema,
+		 "Unknown Errors",
 	),
   422: 
-  jsonContent(ValidationErrorSchema, 
-    "Zod validation errors"
+  jsonContent(AppErrorResponseSchema, 
+    "Zod Validation Errors"
   ),
 
-  500: 
+  503: 
   jsonContent( AppErrorResponseSchema,
-		 "Internal errors",
+		 "Internal Errors",
 	),  
   },
 }

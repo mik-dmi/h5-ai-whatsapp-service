@@ -1,40 +1,40 @@
 import serverEnv from "@/app/internal/shared/env/env.server";
-import { Twilio } from "twilio";
-import { TwilioServerError, UnableToCreateMessageError } from "./schema";
+import  { Twilio } from "twilio";
+import { TwilioErrors } from "./schema";
+import  RestException  from "twilio/lib/base/RestException";
 
 export async function createTwilioMessage(twilioClient : Twilio , whatsappNumberTo : string ){
 
-	const response = await twilioClient.messages.create({
-		from: `whatsapp:${serverEnv.TWILIO_PHONE_NUMBER}`,
-		contentSid: serverEnv.CONTENT_SIT_CREATE_MESSAGE, // (also check spelling)
-		contentVariables: '{"1":"12/1","2":"3pm"}',
-		to: `whatsapp:${whatsappNumberTo}`,
-	});
+	try{ 
+		const response = await twilioClient.messages.create({
+			from: `whatsapp:${serverEnv.TWILIO_PHONE_NUMBER}`,
+			contentSid: serverEnv.CONTENT_SIT_CREATE_MESSAGE, // (also check spelling)
+			contentVariables: '{"1":"12/1","2":"3pm"}',
+			to: `whatsapp:${whatsappNumberTo}`,
+		});
 
-	if (response.status === "failed"  || response.status === "undelivered" ) {
+		if (response.status === "failed"  || response.status === "undelivered" ) {
 
-		const errorCode = response.errorCode ?? 0;
+			const errorCode = response.errorCode  ?? 0;
+
+			
+				throw new TwilioErrors(
+					503,
+					response.errorMessage,
+					"Problem with Twilio Setup",
+					errorCode,
+					undefined
+				);
+			}
 		
-		const clientErrorCodes = new Set<number>([
-			21211, // invalid 'To' phone number (often)
-			21614, // 'To' number not valid
-			30008, // unknown destination / unreachable / etc (commonly)
-		]);
 
-		if (clientErrorCodes.has(errorCode)) {
-			throw new UnableToCreateMessageError(
-				response.status,
-				errorCode,
-				response.errorMessage ?? undefined
-			);
-    	}
-		throw new TwilioServerError(
-			response.status,
-			errorCode,
-			response.errorMessage ?? undefined
-		);
+		return {payload:  response}
+
+	}catch(error : unknown){
+		console.log("Where  : 2" , error  )
+		 if (error instanceof RestException) {
+				throw new TwilioErrors( error.status, error.message, error.name , error.code ?? 0 , error.details)
+		 }
+		 throw error
 	}
-
-
-	return {payload:  response}
 }

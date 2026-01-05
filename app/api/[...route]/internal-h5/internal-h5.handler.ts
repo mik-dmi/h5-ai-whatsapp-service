@@ -22,6 +22,7 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
+
 	c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
 	return c.json({
 		success: true,
