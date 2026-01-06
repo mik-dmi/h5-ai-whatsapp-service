@@ -1,0 +1,8 @@
+services:
+  twilio-prism:
+    image: prism-local:arm
+    container_name: twilio-prism
+    restart: unless-stopped
+    ports:
+      - "4010:4010"
+    command: [ "mock", "--host", "0.0.0.0", "--port", "4010", "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_api_v2010.json" ]
