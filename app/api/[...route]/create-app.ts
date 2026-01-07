@@ -5,12 +5,12 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import pino from "pino";
 import pretty from "pino-pretty";
 import { AppBindings } from "@/types/types";
-import serverEnv from "@/app/internal/shared/env/env.server";
+import serverEnv, { API_TOKENS } from "@/app/internal/shared/env/env.server";
 import defaultHook from "@/app/internal/shared/utils/default-hook";
-
 import productionTwilioClient from "@/app/internal/services/twilio/twilio-clients/production-client";
 import prismTwilioClient from "@/app/internal/services/twilio/twilio-clients/prism-client/prism-twilio-client";
-
+import { bearerAuth } from "hono/bearer-auth";
+import { safeEqual } from "@/app/internal/shared/utils/utils";
 
 export  function createRouter(){
 	return new OpenAPIHono<AppBindings>({
@@ -21,6 +21,9 @@ export  function createRouter(){
 export default function createApp(){
 
 	const app = createRouter().basePath("/api/v1");
+
+	//set up to get token in case of rotation
+
 
 	//adding logger as a dependency to an app
 	app.use(
@@ -45,6 +48,20 @@ export default function createApp(){
 		await next()
 	})
 
+	//add Bearer Authentication
+	app.use('/api/v1/*', bearerAuth( 
+		{
+			token : API_TOKENS,
+			invalidToken: { message: "Unauthorized" },
+			noAuthenticationHeader: { message: "Unauthorized" },
+			
+			verifyToken: async (token) => {
+				// prevents timing attack (not sure if necessary)
+				return API_TOKENS.some((t) => safeEqual(token, t));
+			},
+
+		}
+	))
 
 	app.notFound(notFound)
 	app.onError(onError)
@@ -52,3 +69,4 @@ export default function createApp(){
 	return app;
 
 }
+
