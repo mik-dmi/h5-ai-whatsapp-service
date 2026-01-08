@@ -1,6 +1,6 @@
 import { RouteConfig, RouteHandler } from "@hono/zod-openapi";
-import { ListRoutes } from "./internal-h5.routes";
-import { AppBindings } from "@/types/types";
+import { ListRoutes } from "./send-message.routes";
+import { AppBindings } from "@/app/internal/shared/types/types";
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { createTwilioMessage } from "@/app/internal/services/twilio/create-message/create";
 

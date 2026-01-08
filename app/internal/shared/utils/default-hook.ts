@@ -1,6 +1,6 @@
 import type { Hook } from "@hono/zod-openapi";
-import type { AppBindings } from "@/types/types";
-import { UNPROCESSABLE_ENTITY } from "../errors/errors";
+import type { AppBindings } from "@/app/internal/shared/types/types";
+import { UNPROCESSABLE_ENTITY } from "../errors/errors-constant";
 
 const defaultHook: Hook<unknown, AppBindings, string, Response | void> = (result, c) => {
   if (!result.success) {

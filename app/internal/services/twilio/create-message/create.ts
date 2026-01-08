@@ -16,7 +16,6 @@ export async function createTwilioMessage(twilioClient : Twilio , whatsappNumber
 		if (response.status === "failed"  || response.status === "undelivered" ) {
 
 			const errorCode = response.errorCode  ?? 0;
-
 			
 				throw new TwilioErrors(
 					503,

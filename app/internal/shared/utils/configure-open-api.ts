@@ -1,5 +1,5 @@
 import { clientEnv } from "@/app/internal/shared/env/env.client";
-import { AppOpenAPI } from "../../../../types/types";
+import { AppOpenAPI } from "../types/types";
 import {  Scalar } from "@scalar/hono-api-reference";
 
 export default function configureOpenAPI(app : AppOpenAPI) {

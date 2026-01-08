@@ -1,6 +1,8 @@
 import  jsonContent, { jsonContentRequired } from "@/app/internal/shared/utils/json-content";
 import { createRoute } from "@hono/zod-openapi";
-import { AppErrorResponseSchema, CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema, ValidationErrorSchema } from "./schema";
+import {  CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema } from "./schema";
+import { AppErrorResponseSchema } from "@/app/internal/shared/errors/schema";
+import { TwilioErrorResponseSchema } from "@/app/internal/services/twilio/schema";
 
 const tags = ["Internal H5"];
 
@@ -19,19 +21,21 @@ export  const list = createRoute({
 		 "Endpoint to create Messages"
 	),
   400: 
-  jsonContent( AppErrorResponseSchema,
+  jsonContent( TwilioErrorResponseSchema,
 		 "Bad Request Errors",
 	),
+  401 : jsonContent (AppErrorResponseSchema, 
+    "Unauthorized"),
   403: 
-  jsonContent( AppErrorResponseSchema,
+  jsonContent( TwilioErrorResponseSchema,
 		 "Forbidden Errors",
 	),
   404: 
-  jsonContent( AppErrorResponseSchema,
+  jsonContent( TwilioErrorResponseSchema,
 		 "Not Found Errors",
 	),
   410: 
-  jsonContent( AppErrorResponseSchema,
+  jsonContent( TwilioErrorResponseSchema,
 		 "Unknown Errors",
 	),
   422: 

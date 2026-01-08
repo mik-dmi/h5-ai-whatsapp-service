@@ -1,5 +1,5 @@
-import type { NotFoundHandler } from "hono";
-import { NOT_FOUND, NOT_FOUND_MESSAGE } from "./errors";
+import type { NotFoundHandler,  } from "hono";
+import { NOT_FOUND, NOT_FOUND_MESSAGE } from "./errors-constant";
 
 
 
@@ -8,5 +8,7 @@ const notFound: NotFoundHandler = (c) => {
     message: `${NOT_FOUND_MESSAGE} - ${c.req.path}`,
   }, NOT_FOUND);
 };
+
+
 
 export default notFound;
