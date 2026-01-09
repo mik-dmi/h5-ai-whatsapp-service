@@ -42,6 +42,10 @@ export  const list = createRoute({
   jsonContent(AppErrorResponseSchema, 
     "Zod Validation Errors"
   ),
+  429: 
+  jsonContent(TwilioErrorResponseSchema, 
+    "Rate Limit"
+  ),
 
   503: 
   jsonContent( AppErrorResponseSchema,

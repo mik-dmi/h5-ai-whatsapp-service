@@ -65,6 +65,7 @@ const onError: ErrorHandler = (err, c) => {
             details: isProd
               ? undefined
               : {
+                  details: "details" in err ? err.details : undefined,
                   cause: err.cause,
                   stack: err.stack,
                 },

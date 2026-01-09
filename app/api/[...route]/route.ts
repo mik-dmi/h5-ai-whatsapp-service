@@ -1,12 +1,12 @@
 import configureOpenAPI from "@/app/internal/shared/utils/configure-open-api";
 import { handle } from "hono/vercel";
 import createApp from "./create-app";
-import { router as internalH5Router } from "./internal-h5/internal-h5.index";
+import { router } from "./send-message/send-message.index";
 
 const app = createApp();
 
 const routes = [
-   internalH5Router
+   router
 ];
 
 configureOpenAPI(app);

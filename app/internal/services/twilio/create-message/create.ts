@@ -1,7 +1,7 @@
 import serverEnv from "@/app/internal/shared/env/env.server";
 import  { Twilio } from "twilio";
-import { TwilioErrors } from "./schema";
 import  RestException  from "twilio/lib/base/RestException";
+import { TwilioErrors } from "../errors/twilio-error";
 
 export async function createTwilioMessage(twilioClient : Twilio , whatsappNumberTo : string ){
 
@@ -16,7 +16,7 @@ export async function createTwilioMessage(twilioClient : Twilio , whatsappNumber
 		if (response.status === "failed"  || response.status === "undelivered" ) {
 
 			const errorCode = response.errorCode  ?? 0;
-			
+
 				throw new TwilioErrors(
 					503,
 					response.errorMessage,

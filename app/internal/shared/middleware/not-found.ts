@@ -1,5 +1,5 @@
 import type { NotFoundHandler,  } from "hono";
-import { NOT_FOUND, NOT_FOUND_MESSAGE } from "./errors-constant";
+import { NOT_FOUND, NOT_FOUND_MESSAGE } from "../errors/errors-constant";
 
 
 
