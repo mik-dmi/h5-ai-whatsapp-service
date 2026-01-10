@@ -3,6 +3,7 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { ZodError } from "zod";
 import { TwilioErrors } from "../../services/twilio/errors/twilio-error";
+import { AppErrors } from "../errors/app-error";
 
 const onError: ErrorHandler = (err, c) => {
   const currentStatus = "status" in err ? (err.status as number) : c.newResponse(null).status;
@@ -40,11 +41,12 @@ const onError: ErrorHandler = (err, c) => {
             code: err.code,
             message: isProd && err.status >= 500 ? "Internal Server Error" : err.message,
             details: isProd
-              ? undefined
-              : {
-                  details: err.details ,
-                  stack: err.stack,
-                },
+            ? undefined
+            : {
+                ...(err.details as object | undefined),
+                stack: err.stack,
+                cause: err.cause,
+              },
             },
           ],
         },  
@@ -53,28 +55,41 @@ const onError: ErrorHandler = (err, c) => {
     );
   }
 
+  if(err instanceof AppErrors){
+
 //  App errors and uncatch errors
-  return c.json(
-    {
-      success: false,
-      error: {
-        name: err.name ?? "Internal Error",
-        issues: [
-          {
-            message: isProd && statusCode >= 500 ? "Internal Server Error" : err.message,
-            details: isProd
+    return c.json(
+      {
+        success: false,
+        error: {
+          name: err.name ?? "Internal Error",
+          issues: [
+            {
+              message: isProd && statusCode >= 500 ? "Internal Server Error" : err.message,
+              details: isProd
               ? undefined
               : {
-                  details: "details" in err ? err.details : undefined,
-                  cause: err.cause,
+                  ...(err.details as object | undefined),
                   stack: err.stack,
+                  cause: err.cause,
                 },
-            },
-          ],
-        },  
-      },
+              },
+            ],
+          },  
+        },
+        statusCode >= 400 ? statusCode : 503
+      );
+    }
+    return c.json({
+        success: false,
+        error: {
+          name: err.name ?? "Internal Server Error",
+          error: err,
+        },
+      }, 
       statusCode >= 400 ? statusCode : 503
-    );
+    )
   }
+  
 
 export default onError;

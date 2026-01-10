@@ -2,29 +2,32 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 export class AppErrors extends Error {
   status: ContentfulStatusCode;
-  details?: unknown;
+  details?: object;
 
-  constructor(status: ContentfulStatusCode, message: string, name: string, details?: unknown) {
+  constructor(
+    resStatus: ContentfulStatusCode,
+    message: string,
+    name: string,
+    details?: object
+  ) {
     super(message);
-    this.status = status;
+    Object.setPrototypeOf(this, new.target.prototype);
+
+    this.status = resStatus;
     this.name = name;
     this.details = details;
-    Object.setPrototypeOf(this, new.target.prototype);
   }
 
-  toBearerOption(isProd = process.env.NODE_ENV === "production") {
+  // converts to what bearerAuth expects
+  toBearerOption() {
     return {
       status: this.status,
       message: {
-        success: false,
+        status: this.status,
         error: {
           name: this.name,
-          issues: [
-            {
-              message: isProd && this.status >= 500 ? "Internal Server Error" : this.message,
-              details: isProd ? undefined : { details: this.details },
-            },
-          ],
+          message: this.message,
+          details: this.details,
         },
       },
     };

@@ -5,7 +5,7 @@ import { router } from "./send-message/send-message.index";
 
 const app = createApp();
 
-const routes = [
+ export const routes = [
    router
 ];
 
@@ -16,7 +16,7 @@ routes.forEach((route)=>{
 })
 
 
-
+  
 
 export const GET = handle(app);
 export const POST = handle(app);

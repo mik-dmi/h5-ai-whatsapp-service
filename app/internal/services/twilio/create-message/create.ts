@@ -30,7 +30,6 @@ export async function createTwilioMessage(twilioClient : Twilio , whatsappNumber
 		return {payload:  response}
 
 	}catch(error : unknown){
-		console.log("Where  : 2" , error  )
 		 if (error instanceof RestException) {
 				throw new TwilioErrors( error.status, error.message, error.name , error.code ?? 0 , error.details)
 		 }
