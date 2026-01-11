@@ -1,16 +1,16 @@
 import { pinoLogger } from "hono-pino";
-import notFound from "@/app/internal/shared/middleware/not-found";
-import onError from "@/app/internal/shared/middleware/on-error";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import pino from "pino";
 import pretty from "pino-pretty";
 import { AppBindings } from "@/app/internal/shared/types/types";
+import { timeout } from "hono/timeout";
 import serverEnv from "@/app/internal/shared/env/env.server";
-import defaultHook from "@/app/internal/shared/utils/default-hook";
+import { bearerAuthMiddleware } from "@/app/internal/shared/middleware/bearer-auth";
+import onError from "@/app/internal/shared/middleware/on-error";
+import notFound from "@/app/internal/shared/middleware/not-found";
 import productionTwilioClient from "@/app/internal/services/twilio/twilio-clients/production-client";
 import prismTwilioClient from "@/app/internal/services/twilio/twilio-clients/prism-client/prism-twilio-client";
-import { timeout } from "hono/timeout";
-import { bearerAuthMiddleware } from "@/app/internal/shared/middleware/bearer-auth";
+import defaultHook from "@/app/internal/shared/utils/default-hook";
 
 export  function createRouter(){
 	return new OpenAPIHono<AppBindings>({
