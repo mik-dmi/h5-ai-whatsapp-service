@@ -2,7 +2,7 @@ import { pinoLogger } from "hono-pino";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import pino from "pino";
 import pretty from "pino-pretty";
-import { AppBindings } from "@/app/internal/shared/types/types";
+import { AppBindings, AppOpenAPI } from "@/app/internal/shared/types/types";
 import { timeout } from "hono/timeout";
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { bearerAuthMiddleware } from "@/app/internal/shared/middleware/bearer-auth";
@@ -55,4 +55,7 @@ export default function createApp(){
 	
 	return app;
 }
+
+
+
 

@@ -2,13 +2,13 @@
 import { z, ZodError } from "zod";
 
 const BaseEnvSchema = z.object({
-  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
+  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace","silent"]),
   TWILIO_ACCOUNT_SID: z.string(),
   TWILIO_AUTH_TOKEN: z.string(),
   TWILIO_PHONE_NUMBER: z.string(),
   CONTENT_SIT_CREATE_MESSAGE: z.string(),
   CURRENT_API_TOKEN: z.string(),
-  NEXT_API_TOKEN: z.string().optional(),
+  NEXT_API_TOKEN: z.string(),
 });
 
 const DevEnvSchema = BaseEnvSchema.extend({
@@ -23,9 +23,16 @@ const ProdEnvSchema = BaseEnvSchema.extend({
   TEST_TWILIO_PHONE_NUMBER: z.string().optional(),
 });
 
+const TestEnvSchema = BaseEnvSchema.extend({
+  NODE_ENV: z.literal("test"),
+  PRISM_URL: z.string().url(),
+  TEST_TWILIO_PHONE_NUMBER: z.string(),
+});
+
 export const EnvSchema = z.discriminatedUnion("NODE_ENV", [
   DevEnvSchema,
   ProdEnvSchema,
+  TestEnvSchema,
 ]);
 
 export type ServerEnv = z.infer<typeof EnvSchema>;
@@ -38,6 +45,9 @@ try {
   const error = e as ZodError;
   console.error("error: invalid env:");
   console.error(error);
+  if (process.env.NODE_ENV === "test") {
+    throw error; // fail the test nicely
+  }
   process.exit(1);
 }
 

@@ -8,10 +8,12 @@ import { createTwilioMessage } from "@/app/internal/services/twilio/create-messa
 type AppRouteHandler< R extends RouteConfig > = RouteHandler<R , AppBindings>
 
 export const list: AppRouteHandler<ListRoutes > = async (c) => {
+	c.var.logger.info("Here 1 " ) 
 
 	const messageTemplateData = c.req.valid("json");
 	const twilioClient = c.var.twilioClient
 	
+
 	//c.var.logger.debug({ messageTemplateData }, "createMessageTemplate called");
 
 	//in rpoduction sends the message to the provided Phone Number; in development send it to the set Phone Number 
@@ -19,6 +21,9 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 	const whatsappNumberTo =  serverEnv.NODE_ENV === "production" ?  messageTemplateData.phone_number :  serverEnv.TEST_TWILIO_PHONE_NUMBER;
 
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
+
+
+		console.log("Here 8" )
 
 	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 

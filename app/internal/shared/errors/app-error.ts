@@ -6,8 +6,8 @@ export class AppErrors extends Error {
 
   constructor(
     resStatus: ContentfulStatusCode,
-    message: string,
     name: string,
+    message: string,
     details?: object
   ) {
     super(message);
