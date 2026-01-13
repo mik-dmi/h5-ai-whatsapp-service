@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { createMiddleware } from "hono/factory";
 import { API_TOKENS } from "../env/env.server";
 import { AppErrors } from "../errors/app-error";
-import { INVALID_AUTHENTICATION_HEADER, INVALID_AUTHENTICATION_HEADER_MESSAGE, INVALID_TOKEN, INVALID_TOKEN_MESSAGE } from "../errors/errors-constant";
+import { INVALID_AUTHENTICATION_HEADER, INVALID_AUTHENTICATION_HEADER_MESSAGE, INVALID_TOKEN, INVALID_TOKEN_MESSAGE, NO_AUTHENTICATION_HEADER, NO_AUTHENTICATION_HEADER_MESSAGE } from "../errors/errors-constant";
 
 function safeEqual(a: string, b: string) {
   const ba = Buffer.from(a);
@@ -17,13 +17,13 @@ export const bearerAuthMiddleware = createMiddleware(async (c, next) => {
   if (isDocs || c.req.method === "OPTIONS") return next();
 
   const auth = c.req.header("authorization");
-  if (!auth) throw new AppErrors(401, INVALID_AUTHENTICATION_HEADER , INVALID_AUTHENTICATION_HEADER_MESSAGE, {
+  if (!auth) throw new AppErrors(401, NO_AUTHENTICATION_HEADER , NO_AUTHENTICATION_HEADER_MESSAGE, {
       expected: "Authorization: Bearer <token>",
     });
 
   const [scheme, token] = auth.trim().split(/\s+/);
   if (scheme?.toLowerCase() !== "bearer" || !token) {
-    throw new AppErrors(401, INVALID_TOKEN, INVALID_TOKEN_MESSAGE, {
+    throw new AppErrors(401, INVALID_AUTHENTICATION_HEADER, INVALID_AUTHENTICATION_HEADER_MESSAGE, {
       expected: "Authorization: Bearer <token>",
     });
   }

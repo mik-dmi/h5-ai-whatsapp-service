@@ -8,7 +8,7 @@ export const INVALID_AUTHENTICATION_HEADER = "Bad Request"
 export const INVALID_AUTHENTICATION_HEADER_MESSAGE = "Invalid Authentication Header"
 
 export const NO_AUTHENTICATION_HEADER = "Unauthorized"
-export const NO_AUTHENTICATION_HEADER_MESSAGE = "No Authentication Header"
+export const NO_AUTHENTICATION_HEADER_MESSAGE = "Missing Authentication Header"
 
 
 export const INTERNAL_SERVER_ERROR = 500;
