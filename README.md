@@ -74,6 +74,12 @@ Docs available at:
 
 ---
 
+## Run Tests
+  
+npm run test  
+
+---
+
 ## Things still missing
 
 - Rate limiter
