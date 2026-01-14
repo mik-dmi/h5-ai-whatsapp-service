@@ -4,8 +4,7 @@ import { describe, it, expect } from 'vitest'
 import serverEnv from '@/app/internal/shared/env/env.server'
 import createApp from '../create-app'
 import { router } from './send-message.index'
-import { INVALID_AUTHENTICATION_HEADER, INVALID_AUTHENTICATION_HEADER_MESSAGE, INVALID_TOKEN, INVALID_TOKEN_MESSAGE, NO_AUTHENTICATION_HEADER, NO_AUTHENTICATION_HEADER_MESSAGE } from '@/app/internal/shared/errors/errors-constant'
-import { ZodError } from 'zod'
+import { INVALID_TOKEN, INVALID_TOKEN_MESSAGE, NO_AUTHENTICATION_HEADER, NO_AUTHENTICATION_HEADER_MESSAGE } from '@/app/internal/shared/errors/errors-constant'
 
 describe('Search Endpoint, ', () => {
   // Create the test client from the app instance
