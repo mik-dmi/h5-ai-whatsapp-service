@@ -1,4 +1,7 @@
+import { PrismaClient } from "@/prisma/generated/prisma/client";
+import { GlobalOmitConfig } from "@/prisma/generated/prisma/internal/prismaNamespace";
 import { OpenAPIHono, z } from "@hono/zod-openapi";
+import { DefaultArgs } from "@prisma/client/runtime/client";
 import { PinoLogger } from "hono-pino";
 import { Twilio } from "twilio";
 import z4 from "zod/v4";
@@ -7,7 +10,8 @@ import z4 from "zod/v4";
 export interface  AppBindings {
   Variables :{
     logger: PinoLogger;
-    twilioClient: Twilio;    
+    twilioClient: Twilio;
+    prismaClient: PrismaClient<never, GlobalOmitConfig | undefined, DefaultArgs>;    
   }, 
 
 }

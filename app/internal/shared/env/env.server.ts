@@ -9,6 +9,7 @@ const BaseEnvSchema = z.object({
   CONTENT_SIT_CREATE_MESSAGE: z.string(),
   CURRENT_API_TOKEN: z.string(),
   NEXT_API_TOKEN: z.string(),
+  DATABASE_URL: z.string(),
 });
 
 const DevEnvSchema = BaseEnvSchema.extend({
