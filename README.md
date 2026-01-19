@@ -60,9 +60,19 @@ npm run dev
 
 ## Mock Twilio (development)
 
-This project supports a mocked Twilio server using Prism + docker-compose. Start:
+This project supports a mocked Twilio server using Prism + docker-compose. 
 
-docker-compose up
+Start by:
+
+cd docker/development
+
+Then for AMD64 machines:
+
+docker compose -f docker-compose.yml up -d
+
+Then for ARM machines:
+
+docker compose -f docker-compose.arm.yml up
 
 ---
 
