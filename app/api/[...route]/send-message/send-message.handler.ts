@@ -18,12 +18,9 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 
 	//in rpoduction sends the message to the provided Phone Number; in development send it to the set Phone Number 
 
-	const whatsappNumberTo =  serverEnv.NODE_ENV === "production" ?  messageTemplateData.phone_number :  serverEnv.TEST_TWILIO_PHONE_NUMBER;
+	const whatsappNumberTo =  serverEnv.APP_ENV === "production" ?  messageTemplateData.phone_number :  serverEnv.TEST_TWILIO_PHONE_NUMBER;
 
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
-
-
-	console.log("Here 8" )
 
 	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 

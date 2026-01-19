@@ -27,7 +27,7 @@ export default function createApp(){
 	  pinoLogger({
 		pino: pino(
 		  { level : serverEnv.LOG_LEVEL },
-		  serverEnv.NODE_ENV === "production" ? undefined : pretty() 
+		  serverEnv.APP_ENV === "production" ? undefined : pretty() 
 	
 		),
 		http:{
@@ -38,9 +38,11 @@ export default function createApp(){
 
 	//adding twilio client as a dependency to an app 
 	app.use("*", async (c, next) => {
-		const twilioClient = serverEnv.NODE_ENV === "production" ?  productionTwilioClient : prismTwilioClient
+		const twilioClient = serverEnv.APP_ENV === "production" ?  productionTwilioClient : prismTwilioClient
 		c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`)
 		c.set("twilioClient", twilioClient) // <- this is what makes c.var.twilioClient work
+		c.var.logger.debug(`twilioClient in ${serverEnv.APP_ENV} environment: ${twilioClient}`)
+
 		await next()
 	})
 

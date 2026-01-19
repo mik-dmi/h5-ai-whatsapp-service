@@ -9,7 +9,7 @@ const onError: ErrorHandler = (err, c) => {
   const currentStatus = "status" in err ? (err.status as number) : c.newResponse(null).status;
   const statusCode = (currentStatus || 500) as ContentfulStatusCode;
 
-  const envAux = c.env?.NODE_ENV || serverEnv.NODE_ENV;
+  const envAux = c.env?.APP_ENV || serverEnv.APP_ENV;
   const isProd = envAux === "production";
 
   //  validation errors
