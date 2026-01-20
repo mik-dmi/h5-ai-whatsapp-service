@@ -6,14 +6,16 @@ import { TwilioErrors } from "../errors/twilio-error";
 export async function createTwilioMessage(twilioClient : Twilio , whatsappNumberTo : string ){
 
 	try{ 
-		console.log("Here 9" )
+		
+
+		console.log("Here -: ", twilioClient)
 		const response = await twilioClient.messages.create({
 			from: `whatsapp:${serverEnv.TWILIO_PHONE_NUMBER}`,
 			contentSid: serverEnv.CONTENT_SIT_CREATE_MESSAGE, // (also check spelling)
 			contentVariables: '{"1":"12/1","2":"3pm"}',
 			to: `whatsapp:${whatsappNumberTo}`,
 		});
-			console.log("Here 10" ) 
+			 
 
 
 		if (response.status === "failed"  || response.status === "undelivered" ) {

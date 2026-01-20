@@ -12,24 +12,24 @@ const BaseEnvSchema = z.object({
 });
 
 const DevEnvSchema = BaseEnvSchema.extend({
-  NODE_ENV: z.literal("development"),
+  APP_ENV: z.literal("development"),
   PRISM_URL: z.string().url(),
   TEST_TWILIO_PHONE_NUMBER: z.string(),
 });
 
 const ProdEnvSchema = BaseEnvSchema.extend({
-  NODE_ENV: z.literal("production"),
+  APP_ENV: z.literal("production"),
   PRISM_URL: z.string().url().optional(),
   TEST_TWILIO_PHONE_NUMBER: z.string().optional(),
 });
 
 const TestEnvSchema = BaseEnvSchema.extend({
-  NODE_ENV: z.literal("test"),
+  APP_ENV: z.literal("test"),
   PRISM_URL: z.string().url(),
   TEST_TWILIO_PHONE_NUMBER: z.string(),
 });
 
-export const EnvSchema = z.discriminatedUnion("NODE_ENV", [
+export const EnvSchema = z.discriminatedUnion("APP_ENV", [
   DevEnvSchema,
   ProdEnvSchema,
   TestEnvSchema,
@@ -45,7 +45,7 @@ try {
   const error = e as ZodError;
   console.error("error: invalid env:");
   console.error(error);
-  if (process.env.NODE_ENV === "test") {
+  if (process.env.APP_ENV === "test") {
     throw error; // fail the test nicely
   }
   process.exit(1);

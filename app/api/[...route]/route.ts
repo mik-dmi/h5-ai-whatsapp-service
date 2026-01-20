@@ -4,8 +4,15 @@ import { router } from "./send-message/send-message.index";
 import configureOpenAPI from "@/app/internal/shared/utils/configure-open-api";
 
 const app = createApp();
+
+const routes = [
+	router
+]
 configureOpenAPI(app);
 
+routes.forEach((route)=>{
+	app.route("/", route);
+})
 
 
 export type AppType = typeof app;
