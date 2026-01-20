@@ -24,6 +24,7 @@ export const CreateMessageTemplateResponseSchema = z.object({
   success: z.boolean(),
   status: MessageStatusSchema,
   body: z.string().optional(), // or nullable depending on what you decided
+  sid: z.string(),
 });
 
 

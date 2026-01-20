@@ -6,14 +6,14 @@ import { TwilioErrorResponseSchema } from "@/app/internal/services/twilio/schema
 
 const tags = ["Internal H5"];
 
-export  const list = createRoute({
+export  const createTwillioWpMessage = createRoute({
   tags,
   method: "post",
   path: "/createMessageTemplate", 
   request: {
     body: jsonContentRequired(
         CreateMessageTemplateBodySchema,
-        "Sending the data for sending messages on Whatsapp"
+        "Creating messages on Twilion to send to Whatsapp users"
     ),
   },
   responses: {
@@ -55,4 +55,54 @@ export  const list = createRoute({
 }
 )
 
-export type ListRoutes = typeof list;
+
+export  const twillioWpMessageStatus = createRoute({
+  tags,
+  method: "post",
+  path: "/postMessageStatus", 
+  request: {
+    body: jsonContentRequired(
+        CreateMessageTemplateBodySchema,
+        "Posting the message status (callback endpoint for message staute change on Twilio)"
+    ),
+  },
+  responses: {
+	200: jsonContent( CreateMessageTemplateResponseSchema,
+		 "Endpoint to create Messages"
+	),
+  400: 
+  jsonContent( TwilioErrorResponseSchema,
+		 "Bad Request Errors",
+	),
+  401 : jsonContent (AppErrorResponseSchema, 
+    "Unauthorized"),
+  403: 
+  jsonContent( TwilioErrorResponseSchema,
+		 "Forbidden Errors",
+	),
+  404: 
+  jsonContent( TwilioErrorResponseSchema,
+		 "Not Found Errors",
+	),
+  410: 
+  jsonContent( TwilioErrorResponseSchema,
+		 "Unknown Errors",
+	),
+  422: 
+  jsonContent(AppErrorResponseSchema, 
+    "Zod Validation Errors"
+  ),
+  429: 
+  jsonContent(TwilioErrorResponseSchema, 
+    "Rate Limit"
+  ),
+
+  503: 
+  jsonContent( AppErrorResponseSchema,
+		 "Internal Errors",
+	),  
+  },
+}
+)
+
+export type ListRoutes = typeof createTwillioWpMessage;

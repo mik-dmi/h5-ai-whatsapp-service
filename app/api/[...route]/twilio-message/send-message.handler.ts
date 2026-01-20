@@ -7,7 +7,7 @@ import { createTwilioMessage } from "@/app/internal/services/twilio/create-messa
 
 type AppRouteHandler< R extends RouteConfig > = RouteHandler<R , AppBindings>
 
-export const list: AppRouteHandler<ListRoutes > = async (c) => {
+export const createTwillioWpMessageHandler: AppRouteHandler<ListRoutes > = async (c) => {
 	c.var.logger.info("Here 1 " ) 
 
 	const messageTemplateData = c.req.valid("json");
@@ -25,10 +25,14 @@ export const list: AppRouteHandler<ListRoutes > = async (c) => {
 	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
 
+	c.var.logger.debug({ twilioResponse: response }, "Twilio response full payload");
+
+
 	c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
 	return c.json({
 		success: true,
 		status:   response.payload.status,
 		body: response.payload.body,
+		sid: response.payload.accountSid,
 	}, 200)
 }
