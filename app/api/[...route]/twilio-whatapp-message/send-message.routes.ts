@@ -1,6 +1,6 @@
 import  jsonContent, { jsonContentRequired } from "@/app/internal/shared/utils/json-content";
 import { createRoute } from "@hono/zod-openapi";
-import {  CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema } from "./schema";
+import {  CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema, MessageStatusBodyRequestSchema } from "./schema";
 import { AppErrorResponseSchema } from "@/app/internal/shared/errors/schema";
 import { TwilioErrorResponseSchema } from "@/app/internal/services/twilio/schema";
 
@@ -62,7 +62,7 @@ export  const twillioWpMessageStatus = createRoute({
   path: "/postMessageStatus", 
   request: {
     body: jsonContentRequired(
-        CreateMessageTemplateBodySchema,
+        MessageStatusBodyRequestSchema,
         "Posting the message status (callback endpoint for message staute change on Twilio)"
     ),
   },
@@ -105,4 +105,5 @@ export  const twillioWpMessageStatus = createRoute({
 }
 )
 
-export type ListRoutes = typeof createTwillioWpMessage;
+export type CreateRoute = typeof createTwillioWpMessage;
+export type StatusRoute = typeof twillioWpMessageStatus;
