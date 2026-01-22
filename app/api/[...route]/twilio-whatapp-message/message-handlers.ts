@@ -7,6 +7,7 @@ import { createTwilioMessage } from "@/app/internal/services/twilio/create-messa
 type AppRouteHandler< R extends RouteConfig > = RouteHandler<R , AppBindings>
 
 import type {CreateRoute, StatusRoute } from "./send-message.routes";
+import { MessageStatusBodyRequestSchema } from "./schema";
 
 
 export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = async (c) => {
@@ -40,18 +41,24 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 export const twillioWpMessageStatusHandler: AppRouteHandler<StatusRoute > = async (c) => {
 	
 	c.var.logger.debug({full_payload: c.req.raw })
-	const messageTemplateData = c.req.valid("json");
+	
+	const body = await c.req.parseBody();
+
+  	c.var.logger.debug({ full_payload: body });
+
+	const data = await MessageStatusBodyRequestSchema.parse(body);
+
 	
 	// in to update the status of the message in the DB
 
-	c.var.logger.debug({messageTemplateData: messageTemplateData})
+	c.var.logger.debug({parsed_body: data})
 
 	//c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
 	return c.json({
 		success: true,
-		message_status: messageTemplateData.MessageStatus,
+		message_status: data.MessageStatus,
 		body: "Callback message from twilio",
-		sid: messageTemplateData.MessageSid
+		sid: data.MessageSid
 	}, 200)
 }
 

@@ -24,7 +24,7 @@ export const CreateMessageTemplateResponseSchema = z.object({
   success: z.boolean(),
   message_status: MessageStatusSchema,
   body: z.string().optional(), // or nullable depending on what you decided
-  sid: z.string(),
+  sid: z.string(), //message identifi
 });
 
 
@@ -37,6 +37,7 @@ export const CreateMessageTemplateBodySchema = z.object({
   first_name: z.string().max(30).min(2),
 });
 
+/*
 export const MessageStatusBodyRequestSchema = z.object({
   ChannelPrefix: z.string().max(50).min(2),
   MessageStatus: MessageStatusSchema,
@@ -44,6 +45,13 @@ export const MessageStatusBodyRequestSchema = z.object({
   ChannelInstallSid: z.string().max(50).min(5),
   MessageSid: z.string().max(50).min(5),
 });
+*/
+
+export const MessageStatusBodyRequestSchema = z.object({
+  MessageSid: z.string(),
+  MessageStatus: MessageStatusSchema,
+  ErrorCode: z.string().optional(),
+}).loose(); // as it is what is recomended on Twilio docs
 
 
 
