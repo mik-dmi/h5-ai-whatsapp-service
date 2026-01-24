@@ -60,12 +60,10 @@ export  const twillioWpMessageStatus = createRoute({
   tags,
   method: "post",
   path: "/postMessageStatus", 
-  request: {
-    body: jsonContentRequired(
-        MessageStatusBodyRequestSchema,
-        "Posting the message status (callback endpoint for message staute change on Twilio)"
-    ),
-  },
+  description: "Twilio WhatsApp Status Callback (no defined no defined request.body as the callback uses application/x-www-form-urlencoded)",
+
+  //  no defined request.body as the callback uses application/x-www-form-urlencoded
+
   responses: {
 	200: jsonContent( CreateMessageTemplateResponseSchema,
 		 "Endpoint to create Messages"

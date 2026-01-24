@@ -1,7 +1,7 @@
 import { handle } from "hono/vercel";
 import createApp from "./create-app";
 import configureOpenAPI from "@/app/internal/shared/utils/configure-open-api";
-import { router } from "./twilio-message/send-message.index";
+import { router } from "./twilio-whatapp-message/send-message.index";
 
 const app = createApp();
 

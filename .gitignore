@@ -45,3 +45,5 @@ collection.bru
 next-env.d.ts
 
 README.internal.md
+
+/app/generated/prisma

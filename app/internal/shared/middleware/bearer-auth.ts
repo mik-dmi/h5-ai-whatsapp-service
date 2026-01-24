@@ -13,7 +13,7 @@ function safeEqual(a: string, b: string) {
 
 export const bearerAuthMiddleware = createMiddleware(async (c, next) => {
   const path = c.req.path;
-  const isDocs = path === "/api/v1/scalar" || path === "/api/v1/doc";
+  const isDocs = path === "/api/v1/scalar" || path === "/api/v1/doc" || path === "/api/v1/postMessageStatus";
   if (isDocs || c.req.method === "OPTIONS") return next();
 
   const auth = c.req.header("authorization");
