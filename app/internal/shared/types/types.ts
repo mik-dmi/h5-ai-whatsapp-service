@@ -1,4 +1,5 @@
 import { OpenAPIHono, z } from "@hono/zod-openapi";
+
 import { PinoLogger } from "hono-pino";
 import { Twilio } from "twilio";
 import z4 from "zod/v4";
@@ -7,7 +8,9 @@ import z4 from "zod/v4";
 export interface  AppBindings {
   Variables :{
     logger: PinoLogger;
-    twilioClient: Twilio;    
+    twilioClient: Twilio;  
+    //prismaClient: PrismaClient<never, GlobalOmitConfig | undefined, DefaultArgs>;    
+
   }, 
 
 }
