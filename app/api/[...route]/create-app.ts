@@ -11,6 +11,7 @@ import notFound from "@/app/internal/shared/middleware/not-found";
 import productionTwilioClient from "@/app/internal/services/twilio/twilio-clients/production-client";
 import prismTwilioClient from "@/app/internal/services/twilio/twilio-clients/prism-client/prism-twilio-client";
 import defaultHook from "@/app/internal/shared/utils/default-hook";
+import { PrismaClient } from "@prisma/client/extension";
 
 export  function createRouter(){
 	return new OpenAPIHono<AppBindings>({
@@ -36,13 +37,19 @@ export default function createApp(){
 	  })
 	);
 
-	//adding twilio client as a dependency to an app 
+	//adding twilio and prisma client as a dependency to an app 
 	app.use("*", async (c, next) => {
 		const twilioClient = serverEnv.APP_ENV === "production" ?  productionTwilioClient : prismTwilioClient
-		c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`)
-		c.set("twilioClient", twilioClient) // <- this is what makes c.var.twilioClient work
+		c.set("twilioClient", twilioClient) 
 		c.var.logger.debug(`twilioClient in ${serverEnv.APP_ENV} environment: ${twilioClient}`)
+		
+		c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`)
 
+		const prismaClient =  new PrismaClient();
+
+		c.set("prismaClient", prismaClient)
+
+		
 		await next()
 	})
 

@@ -1,5 +1,5 @@
+import { PrismaClient } from "@/prisma/generated/prisma/client";
 import { OpenAPIHono, z } from "@hono/zod-openapi";
-
 import { PinoLogger } from "hono-pino";
 import { Twilio } from "twilio";
 import z4 from "zod/v4";
@@ -9,10 +9,9 @@ export interface  AppBindings {
   Variables :{
     logger: PinoLogger;
     twilioClient: Twilio;  
-    //prismaClient: PrismaClient<never, GlobalOmitConfig | undefined, DefaultArgs>;    
+    prismaClient: PrismaClient ;    
 
   }, 
-
 }
 
 export function toZodV4SchemaTyped<T extends z4.ZodTypeAny>(

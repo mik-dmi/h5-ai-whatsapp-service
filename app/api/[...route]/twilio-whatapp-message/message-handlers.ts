@@ -15,7 +15,6 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 	const messageTemplateData = c.req.valid("json");
 	const twilioClient = c.var.twilioClient
 	
-
 	//c.var.logger.debug({ messageTemplateData }, "createMessageTemplate called");
 
 	//in rpoduction sends the message to the provided Phone Number; in development send it to the set Phone Number 
@@ -26,8 +25,19 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 
 	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
-	c.var.logger.debug({ twilioResponse: response }, "Twilio response full payload");
+	const userClient = c.var.prismaClient.users.findFirst({
+		where: {
+			phone_number: messageTemplateData.phone_number
 
+  		}	
+	})
+
+	if(userClient === null ){
+		
+		
+	}
+	 
+	c.var.logger.debug({ twilioResponse: response }, "Twilio response full payload");
 
 	c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
 	return c.json({

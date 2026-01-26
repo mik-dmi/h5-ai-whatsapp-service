@@ -1,6 +1,6 @@
 import  jsonContent, { jsonContentRequired } from "@/app/internal/shared/utils/json-content";
 import { createRoute } from "@hono/zod-openapi";
-import {  CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema, MessageStatusBodyRequestSchema } from "./schema";
+import {  CreateMessageTemplateBodySchema, CreateMessageTemplateResponseSchema } from "./schema";
 import { AppErrorResponseSchema } from "@/app/internal/shared/errors/schema";
 import { TwilioErrorResponseSchema } from "@/app/internal/services/twilio/schema";
 
