@@ -1,5 +1,5 @@
 import { RouteConfig, RouteHandler } from "@hono/zod-openapi";
-import { AppBindings } from "@/app/internal/shared/types/types";
+import { AppBindings, MessageDirection } from "@/app/internal/shared/types/types";
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { createTwilioMessage } from "@/app/internal/services/twilio/create-message/create";
 
@@ -23,28 +23,37 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
 
-	const response = await createTwilioMessage(twilioClient , whatsappNumberTo)
+	const message = await createTwilioMessage(twilioClient , whatsappNumberTo)
 
-	const userClient = c.var.prismaClient.users.findFirst({
-		where: {
-			phone_number: messageTemplateData.phone_number
+	c.var.logger.debug({ twilioResponse: message }, "Twilio response full payload");
 
-  		}	
-	})
+	//check for user in the db
+	let storedUser =  await c.var.store.users.getUser(whatsappNumberTo)
 
-	if(userClient === null ){
-		
-		
+	// no previous entry, create an entry
+	if(storedUser === null ){
+		storedUser = await c.var.store.users.createUser(whatsappNumberTo)
 	}
-	 
-	c.var.logger.debug({ twilioResponse: response }, "Twilio response full payload");
+	c.var.logger.debug("user entry created on db")
 
-	c.var.logger.debug("Twilio response to create message: %s ", response.payload.status);
+	//get convertion 
+	let conversation = await c.var.store.conversations.getOpenConversation(storedUser.user_id)
+
+	if(conversation === null){	
+		conversation = await c.var.store.conversations.createConversation(storedUser.user_id)
+	}
+
+	// store message 
+
+	await c.var.store.messages.createMessage(conversation.conversation_id , storedUser.user_id, MessageDirection.OUTBOUND,  message.payload.body , message.payload.status, message.payload.sid)
+	 
+	c.var.logger.debug({ conversation_id : conversation.conversation_id , userId: storedUser.user_id, messageDirection : MessageDirection.OUTBOUND, body:  message.payload.body , messageStatus: message.payload.status, messageSid: message.payload.sid }, "Debug field used to create a message: ");
+
 	return c.json({
 		success: true,
-		message_status:   response.payload.status,
-		body: response.payload.body,
-		sid: response.payload.sid,
+		message_status:   message.payload.status,
+		body: message.payload.body,
+		sid: message.payload.sid,
 	}, 200)
 }
 

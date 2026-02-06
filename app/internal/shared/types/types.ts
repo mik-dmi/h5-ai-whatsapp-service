@@ -1,17 +1,21 @@
-import { PrismaClient } from "@/prisma/generated/prisma/client";
 import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { PinoLogger } from "hono-pino";
 import { Twilio } from "twilio";
 import z4 from "zod/v4";
+import { Repositories } from "../../storage/store";
 
 //inject depencies that need to be availale in the 
 export interface  AppBindings {
   Variables :{
     logger: PinoLogger;
     twilioClient: Twilio;  
-    prismaClient: PrismaClient ;    
+    store:  Repositories;    
 
   }, 
+}
+export enum MessageDirection {
+  INBOUND = "inbound",
+  OUTBOUND = "outbound",
 }
 
 export function toZodV4SchemaTyped<T extends z4.ZodTypeAny>(

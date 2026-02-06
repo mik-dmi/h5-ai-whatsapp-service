@@ -2,7 +2,7 @@ import { pinoLogger } from "hono-pino";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import pino from "pino";
 import pretty from "pino-pretty";
-import { AppBindings, AppOpenAPI } from "@/app/internal/shared/types/types";
+import { AppBindings } from "@/app/internal/shared/types/types";
 import { timeout } from "hono/timeout";
 import serverEnv from "@/app/internal/shared/env/env.server";
 import { bearerAuthMiddleware } from "@/app/internal/shared/middleware/bearer-auth";
@@ -11,7 +11,8 @@ import notFound from "@/app/internal/shared/middleware/not-found";
 import productionTwilioClient from "@/app/internal/services/twilio/twilio-clients/production-client";
 import prismTwilioClient from "@/app/internal/services/twilio/twilio-clients/prism-client/prism-twilio-client";
 import defaultHook from "@/app/internal/shared/utils/default-hook";
-import { PrismaClient } from "@prisma/client/extension";
+import { NewPrismaStorage } from "@/app/internal/storage/store";
+import { prisma } from "@/app/internal/services/prisma/client";
 
 export  function createRouter(){
 	return new OpenAPIHono<AppBindings>({
@@ -45,9 +46,12 @@ export default function createApp(){
 		
 		c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`)
 
-		const prismaClient =  new PrismaClient();
+		
+		const store = NewPrismaStorage(prisma)
 
-		c.set("prismaClient", prismaClient)
+		
+
+		c.set("store", store )
 
 		
 		await next()
