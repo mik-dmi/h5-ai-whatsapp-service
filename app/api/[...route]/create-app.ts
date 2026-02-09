@@ -23,7 +23,10 @@ export  function createRouter(){
 export default function createApp(){
 
 	const app = createRouter().basePath("/api/v1");
-
+	app.openAPIRegistry.registerComponent("securitySchemes", "BearerAuth", {
+		type: "http",
+		scheme: "bearer",
+	});
 	//adding logger as a dependency to an app
 	app.use(
 	  pinoLogger({
@@ -40,7 +43,10 @@ export default function createApp(){
 
 	//adding twilio and prisma client as a dependency to an app 
 	app.use("*", async (c, next) => {
-		const twilioClient = serverEnv.APP_ENV === "production" ?  productionTwilioClient : prismTwilioClient
+		//const twilioClient = serverEnv.APP_ENV === "production" ?  productionTwilioClient : prismTwilioClient
+		
+		const twilioClient = serverEnv.CONNECT_TO_TWILIO === true ?  productionTwilioClient : prismTwilioClient
+
 		c.set("twilioClient", twilioClient) 
 		c.var.logger.debug(`twilioClient in ${serverEnv.APP_ENV} environment: ${twilioClient}`)
 		

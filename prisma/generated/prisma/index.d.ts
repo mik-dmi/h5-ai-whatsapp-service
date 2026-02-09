@@ -4712,6 +4712,7 @@ export namespace Prisma {
 
   export type messagesWhereUniqueInput = Prisma.AtLeast<{
     message_id?: bigint | number
+    twilio_message_sid?: string
     AND?: messagesWhereInput | messagesWhereInput[]
     OR?: messagesWhereInput[]
     NOT?: messagesWhereInput | messagesWhereInput[]
@@ -4720,11 +4721,10 @@ export namespace Prisma {
     direction?: StringNullableFilter<"messages"> | string | null
     message_text?: StringNullableFilter<"messages"> | string | null
     message_status?: StringNullableFilter<"messages"> | string | null
-    twilio_message_sid?: StringNullableFilter<"messages"> | string | null
     created_at?: DateTimeNullableFilter<"messages"> | Date | string | null
     conversation?: XOR<ConversationsScalarRelationFilter, conversationsWhereInput>
     user?: XOR<UsersNullableScalarRelationFilter, usersWhereInput> | null
-  }, "message_id">
+  }, "message_id" | "twilio_message_sid">
 
   export type messagesOrderByWithAggregationInput = {
     message_id?: SortOrder

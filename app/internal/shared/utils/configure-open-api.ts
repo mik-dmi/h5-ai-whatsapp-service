@@ -1,6 +1,7 @@
 import { clientEnv } from "@/app/internal/shared/env/env.client";
 import { AppOpenAPI } from "../types/types";
 import {  Scalar } from "@scalar/hono-api-reference";
+import serverEnv from "../env/env.server";
 
 export default function configureOpenAPI(app : AppOpenAPI) {
 	app.doc('/doc', {
@@ -22,7 +23,18 @@ export default function configureOpenAPI(app : AppOpenAPI) {
 			defaultHttpClient: {
 				targetKey	: "js",
 				clientKey : "fetch"
-			}
+			},
+			authentication: {
+				preferredSecurityScheme: "BearerAuth",
+				securitySchemes: {
+					BearerAuth: {
+					// IMPORTANT: Scalar expects the RAW token; it will add "Bearer " itself
+					token:  serverEnv.APP_ENV ===  "production" ? "" : serverEnv.CURRENT_API_TOKEN,
+					},
+				},
+			},
+			persistAuth: true,
+
 		})
 	)	
 }

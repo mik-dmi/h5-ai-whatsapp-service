@@ -8,6 +8,7 @@ const app = createApp();
 const routes = [
 	router
 ]
+
 configureOpenAPI(app);
 
 routes.forEach((route)=>{

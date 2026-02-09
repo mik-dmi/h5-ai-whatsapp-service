@@ -1,7 +1,7 @@
 import PrismaUserRepository from "./user"
 import PrismaConversationRepository from "./conversation"
 import PrismaMessageRepository from "./message"
-import { conversations, PrismaClient, users } from "@/prisma/generated/prisma"
+import { conversations, messages, PrismaClient, users } from "@/prisma/generated/prisma"
 import { MessageDirection } from "../shared/types/types"
 
 export  interface  UserRepository {
@@ -19,7 +19,7 @@ export  interface  MessageRepository {
 		messageText: string,
 		messageStatus: string,
 		twilioMessageSid: string):Promise<boolean>
-	getMessage():Promise<boolean>
+	getMessagebySid( messageSid : string ): Promise<messages | null>
 }
 
 export interface Repositories {

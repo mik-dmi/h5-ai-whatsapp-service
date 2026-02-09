@@ -10,6 +10,7 @@ export  const createTwillioWpMessage = createRoute({
   tags,
   method: "post",
   path: "/createMessageTemplate", 
+  security: [{ BearerAuth: [] }],
   request: {
     body: jsonContentRequired(
         CreateMessageTemplateBodySchema,
@@ -60,8 +61,9 @@ export  const twillioWpMessageStatus = createRoute({
   tags,
   method: "post",
   path: "/postMessageStatus", 
+  
   description: "Twilio WhatsApp Status Callback (no defined no defined request.body as the callback uses application/x-www-form-urlencoded)",
-
+  headers: "",
   //  no defined request.body as the callback uses application/x-www-form-urlencoded
 
   responses: {

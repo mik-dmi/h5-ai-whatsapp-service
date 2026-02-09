@@ -19,6 +19,7 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 
 	//in rpoduction sends the message to the provided Phone Number; in development send it to the set Phone Number 
 
+	
 	const whatsappNumberTo =  serverEnv.APP_ENV === "production" ?  messageTemplateData.phone_number :  serverEnv.TEST_TWILIO_PHONE_NUMBER;
 
 	//c.var.logger.debug(`Number to: ${whatsappNumberTo}`);
@@ -27,6 +28,7 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 
 	c.var.logger.debug({ twilioResponse: message }, "Twilio response full payload");
 
+	
 	//check for user in the db
 	let storedUser =  await c.var.store.users.getUser(whatsappNumberTo)
 
@@ -45,6 +47,7 @@ export const createTwillioWpMessageHandler: AppRouteHandler<CreateRoute > = asyn
 
 	// store message 
 
+	
 	await c.var.store.messages.createMessage(conversation.conversation_id , storedUser.user_id, MessageDirection.OUTBOUND,  message.payload.body , message.payload.status, message.payload.sid)
 	 
 	c.var.logger.debug({ conversation_id : conversation.conversation_id , userId: storedUser.user_id, messageDirection : MessageDirection.OUTBOUND, body:  message.payload.body , messageStatus: message.payload.status, messageSid: message.payload.sid }, "Debug field used to create a message: ");

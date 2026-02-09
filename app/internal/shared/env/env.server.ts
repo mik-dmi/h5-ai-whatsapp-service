@@ -10,6 +10,7 @@ const BaseEnvSchema = z.object({
   CURRENT_API_TOKEN: z.string(),
   NEXT_API_TOKEN: z.string(),
   DATABASE_URL: z.string(),
+  CONNECT_TO_TWILIO:z.enum(["true", "false"]).transform((v) => v === "true"),
 });
 
 const DevEnvSchema = BaseEnvSchema.extend({
