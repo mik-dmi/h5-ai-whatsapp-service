@@ -1,17 +1,14 @@
-import serverEnv from "@/app/internal/shared/env/env.server";
 import  { Twilio } from "twilio";
 import  RestException  from "twilio/lib/base/RestException";
 import { TwilioErrors } from "../errors/twilio-error";
+import { twilioMessageTemplate } from "@/app/api/[...route]/twilio-whatapp-message/message-handlers";
 
-export async function createTwilioMessage(twilioClient : Twilio , whatsappNumberTo : string ){
+
+
+export async function createTwilioMessage(twilioClient : Twilio , whatsappNumberTo : string , twilioMessageTemplate : twilioMessageTemplate){
 
 	try{ 
-			const response = await twilioClient.messages.create({
-			from: `whatsapp:${serverEnv.TWILIO_PHONE_NUMBER}`,
-			contentSid: serverEnv.CONTENT_SIT_CREATE_MESSAGE, // (also check spelling)
-			contentVariables: '{"1":"12/1","2":"3pm"}',
-			to: `whatsapp:${whatsappNumberTo}`,
-		});
+		const response = await twilioClient.messages.create(twilioMessageTemplate);
 			 
 		if (response.status === "failed"  || response.status === "undelivered" ) {
 

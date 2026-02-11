@@ -18,8 +18,10 @@ export  interface  MessageRepository {
 		direction: MessageDirection,
 		messageText: string,
 		messageStatus: string,
-		twilioMessageSid: string):Promise<boolean>
-	getMessagebySid( messageSid : string ): Promise<messages | null>
+	twilioMessageSid: string | null):Promise<messages>
+	getMessageBySid( messageSid : string ): Promise<messages | null>
+	updateMessageStatusBySid(messageSid : string , newMessageStatus : string): Promise<boolean> 
+	updateMessageDataByMessageId(messageId: bigint, direction: string, payload :string , status: string , message_sid : string | null): Promise<messages>
 }
 
 export interface Repositories {

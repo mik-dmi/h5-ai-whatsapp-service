@@ -75,6 +75,11 @@ Then for ARM machines:
 docker compose -f docker-compose.arm.yml up
 
 ---
+## Testing the postMessageStatus endpoint in the development environment using ngrok
+
+Start by installing ngrok, then run the following command (use the port 3000, where the API is running):
+
+ngrok http 3000
 
 ## OpenAPI / Scalar
 

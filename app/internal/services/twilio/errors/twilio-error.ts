@@ -11,7 +11,7 @@ export class TwilioErrors extends Error {
 	this.code = code;
 	this.name = name;
 	this.details = details;
-	//Object.setPrototypeOf(this, new.target.prototype);
+	Object.setPrototypeOf(this, new.target.prototype);
   }
 
   standardizeStatusCode(status: number): AcceptedStatusCodes {
