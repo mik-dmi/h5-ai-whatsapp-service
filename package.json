@@ -1,43 +1,45 @@
 {
-  "name": "h5-whatsapp-service",
-  "type": "module",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "test": "LOG_LEVEL=silent vitest"
-  },
-  "dependencies": {
-    "@hono/zod-openapi": "^1.1.5",
-    "@hono/zod-validator": "^0.7.5",
-    "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0",
-    "@scalar/hono-api-reference": "^0.9.28",
-    "@tanstack/react-query": "^5.90.12",
-    "@twilio-labs/serverless-runtime-types": "^4.0.1",
-    "hono": "^4.10.7",
-    "hono-pino": "^0.10.3",
-    "next": "^15.5.9",
-    "pino": "^10.1.0",
-    "pino-pretty": "^13.1.3",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "status": "^0.0.13",
-    "supabase": "^2.72.8",
-    "twilio": "^5.11.1",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@next/env": "^16.1.1",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.2",
-    "typescript": "^5",
-    "vite-tsconfig-paths": "^6.0.4",
-    "vitest": "^4.0.16"
-  }
+    "name": "h5-whatsapp-service",
+    "type": "module",
+    "scripts": {
+        "dev": "npm run lint && npm run format && next dev ",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint . --fix",
+        "format": "prettier --write .",
+        "test": "LOG_LEVEL=silent vitest"
+    },
+    "dependencies": {
+        "@hono/zod-openapi": "^1.1.5",
+        "@hono/zod-validator": "^0.7.5",
+        "@prisma/adapter-pg": "^7.3.0",
+        "@prisma/client": "^7.3.0",
+        "@scalar/hono-api-reference": "^0.9.28",
+        "@tanstack/react-query": "^5.90.12",
+        "@twilio-labs/serverless-runtime-types": "^4.0.1",
+        "hono": "^4.10.7",
+        "hono-pino": "^0.10.3",
+        "next": "^15.5.9",
+        "pino": "^10.1.0",
+        "pino-pretty": "^13.1.3",
+        "react": "19.1.0",
+        "react-dom": "19.1.0",
+        "status": "^0.0.13",
+        "supabase": "^2.72.8",
+        "twilio": "^5.11.1",
+        "zod": "^4.1.13"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "^3",
+        "@next/env": "^16.1.1",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9",
+        "eslint-config-next": "15.5.2",
+        "prettier": "^3.8.1",
+        "typescript": "^5",
+        "vite-tsconfig-paths": "^6.0.4",
+        "vitest": "^4.0.16"
+    }
 }

@@ -1,36 +1,31 @@
-import { OpenAPIHono, z } from "@hono/zod-openapi";
-import { PinoLogger } from "hono-pino";
-import { Twilio } from "twilio";
-import z4 from "zod/v4";
-import { Repositories } from "../../storage/store";
+import { OpenAPIHono, z } from '@hono/zod-openapi';
+import { PinoLogger } from 'hono-pino';
+import { Twilio } from 'twilio';
+import z4 from 'zod/v4';
+import { Repositories } from '../../storage/store';
 
-//inject depencies that need to be availale in the 
-export interface  AppBindings {
-  Variables :{
-    logger: PinoLogger;
-    twilioClient: Twilio;  
-    store:  Repositories;    
-
-  }, 
+//inject depencies that need to be availale in the
+export interface AppBindings {
+    Variables: {
+        logger: PinoLogger;
+        twilioClient: Twilio;
+        store: Repositories;
+    };
 }
 export enum MessageDirection {
-  INBOUND = "inbound",
-  OUTBOUND = "outbound",
+    INBOUND = 'inbound',
+    OUTBOUND = 'outbound',
 }
 
-export function toZodV4SchemaTyped<T extends z4.ZodTypeAny>(
-  schema: T,
-) {
-  return schema as unknown as z.ZodType<z4.infer<T>>;
+export function toZodV4SchemaTyped<T extends z4.ZodTypeAny>(schema: T) {
+    return schema as unknown as z.ZodType<z4.infer<T>>;
 }
 
 export const InternalErrorSchema = z.object({
-  message: z.string(),
-  stack: z.string().optional(),
+    message: z.string(),
+    stack: z.string().optional(),
 });
 
-
-
-export type ZodSchema = z.ZodUnion | z.ZodAny  | z.ZodArray<z.ZodAny>;
+export type ZodSchema = z.ZodUnion | z.ZodAny | z.ZodArray<z.ZodAny>;
 export type ZodIssue = z.ZodIssue;
-export type AppOpenAPI = OpenAPIHono<AppBindings>
+export type AppOpenAPI = OpenAPIHono<AppBindings>;

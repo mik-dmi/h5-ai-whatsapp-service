@@ -1,12 +1,13 @@
-import { createRouter } from "../create-app";
-import * as handlers from "./message-handlers";
-import * as routes from "./send-message.routes"
-
+import { createRouter } from '../create-app';
+import * as handlers from './message-handlers';
+import * as routes from './send-message.routes';
 
 export const router = createRouter()
-.openapi(routes.createTwillioWpMessage , handlers.createTwillioWpMessageHandler )
-.openapi(routes.twillioWpMessageStatus , handlers.twillioWpMessageStatusHandler )
-
-
-
-
+    .openapi(
+        routes.createTwillioWpMessage,
+        handlers.createTwillioWpMessageHandler,
+    )
+    .openapi(
+        routes.twillioWpMessageStatus,
+        handlers.twillioWpMessageStatusHandler,
+    );

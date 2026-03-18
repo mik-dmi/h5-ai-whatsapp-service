@@ -2,9 +2,9 @@
 
 A Next.js app exposing an API built with **Hono** that:
 
-1) data is posted to `/api/v1/createMessageTemplate`  
-2) formats the data into a **Twilio message template**  
-3) sends the message to **Twilio** (WhatsApp)
+1. data is posted to `/api/v1/createMessageTemplate`
+2. formats the data into a **Twilio message template**
+3. sends the message to **Twilio** (WhatsApp)
 
 The endpoint is protected with **Bearer token authentication**.
 
@@ -47,20 +47,20 @@ Receives data, formats it into a Twilio message template, and sends it via Twili
 ### Required Headers
 
 Authorization: Bearer <CURRENT_API_TOKEN>  
-Content-Type: application/json  
+Content-Type: application/json
 
 ---
 
 ## Local Development
 
 npm install  
-npm run dev  
+npm run dev
 
 ---
 
 ## Mock Twilio (development)
 
-This project supports a mocked Twilio server using Prism + docker-compose. 
+This project supports a mocked Twilio server using Prism + docker-compose.
 
 Start by:
 
@@ -75,6 +75,7 @@ Then for ARM machines:
 docker compose -f docker-compose.arm.yml up
 
 ---
+
 ## Testing the postMessageStatus endpoint in the development environment using ngrok
 
 Start by installing ngrok, then run the following command (use the port 3000, where the API is running):
@@ -90,8 +91,8 @@ Docs available at:
 ---
 
 ## Run Tests
-  
-npm run test  
+
+npm run test
 
 ---
 
