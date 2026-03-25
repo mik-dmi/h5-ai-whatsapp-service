@@ -66,7 +66,7 @@ export default function createApp() {
     app.use('*', bearerAuthMiddleware);
 
     // max time for routes to respond back
-    app.use('*', timeout(5000));
+    app.use('*', timeout(10000));
 
     app.notFound(notFound);
     app.onError(onError);
