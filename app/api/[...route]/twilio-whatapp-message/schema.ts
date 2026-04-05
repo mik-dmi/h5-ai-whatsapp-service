@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { MessageStatus as MessageStatusInDB } from '@/prisma/generated/prisma';
 
-export const messageStatusValues = [
+export const messageStatusInTwilio = [
     'queued',
     'sending',
     'sent',
@@ -16,39 +17,41 @@ export const messageStatusValues = [
     'canceled',
 ] as const;
 
-export type MessageStatus = (typeof messageStatusValues)[number];
+//export type MessageStatusInTwilio = z.infer < typeof MessageStatusInTwilioSchema >;
 
-export const MessageStatusSchema = z.enum(messageStatusValues);
+export const MessageStatusInTwilioSchema = z.enum(messageStatusInTwilio);
 
-export const CreateMessageTemplateResponseSchema = z.object({
+export const MessageStatusInSupabaseSchema = z.enum(MessageStatusInDB);
+
+export const CreateMessageResponseSchema = z.object({
     success: z.boolean(),
-    message_status: MessageStatusSchema,
+    message_status: messageStatusInTwilio,
     body: z.string().optional(), // or nullable depending on what you decided
-    sid: z.string(), //message identifi
+    sid: z.string().nullable(), //message identifi
+});
+
+export const CreateMessagesResponseSchema = z.object({
+    success: z.boolean(),
+    messages: z.array(CreateMessageResponseSchema),
+});
+
+export const CreateMessagePayloadSchema = z.object({
+    date: z.string().max(15).min(4),
+    first_name: z.string().max(30).min(2),
+    last_name: z.string().max(30).min(2),
+    wp_phone_number: z.string().max(20).min(9),
+    template_sid: z.string().max(30).min(9),
+    time: z.string().max(15).min(2),
+    location: z.string(),
 });
 
 // need to improve the zod validation
-export const CreateMessageTemplateBodySchema = z.object({
-    date: z.string().max(15).min(4),
-    time: z.string().max(15).min(2),
-    phone_number: z.string().max(20).min(9),
-    first_name: z.string().max(30).min(2),
-});
-
-/*
-export const MessageStatusBodyRequestSchema = z.object({
-  ChannelPrefix: z.string().max(50).min(2),
-  MessageStatus: MessageStatusSchema,
-  SmsSid: z.string().max(50).min(5),
-  ChannelInstallSid: z.string().max(50).min(5),
-  MessageSid: z.string().max(50).min(5),
-});
-*/
+export const CreateMessagesPayloadSchema = z.array(CreateMessagePayloadSchema);
 
 export const MessageStatusBodyRequestSchema = z
     .object({
         MessageSid: z.string(),
-        MessageStatus: MessageStatusSchema,
+        MessageStatus: MessageStatusInTwilioSchema,
         ErrorCode: z.string().optional(),
     })
     .loose(); // as it is what is recomended on Twilio docs

@@ -19,6 +19,8 @@ const BaseEnvSchema = z.object({
     NEXT_API_TOKEN: z.string(),
     DATABASE_URL: z.string(),
     CONNECT_TO_TWILIO: z.enum(['true', 'false']).transform((v) => v === 'true'),
+    QUEUE_CLEANUP_THRESHOLD: z.number(),
+    QUEUE_MAX_LENGTH: z.number(),
 });
 
 const DevEnvSchema = BaseEnvSchema.extend({

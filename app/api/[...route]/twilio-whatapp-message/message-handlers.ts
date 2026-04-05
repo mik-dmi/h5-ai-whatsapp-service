@@ -1,124 +1,43 @@
 import { RouteConfig, RouteHandler } from '@hono/zod-openapi';
-import {
-    AppBindings,
-    MessageDirection,
-} from '@/app/internal/shared/types/types';
-import serverEnv from '@/app/internal/shared/env/env.server';
-import { createTwilioMessage } from '@/app/internal/services/twilio/create-message/create';
-
-type AppRouteHandler<R extends RouteConfig> = RouteHandler<R, AppBindings>;
-
+import { AppBindings } from '@/app/internal/shared/types/types';
+import { sendWhatsappMessageToUser } from '@/app/internal/services/twilio/create-message/service';
 import type { CreateRoute, StatusRoute } from './send-message.routes';
 import { MessageStatusBodyRequestSchema } from './schema';
+import { HTTPException } from 'hono/http-exception';
+import { TwilioErrors } from '@/app/internal/services/twilio/errors/twilio-error';
 
-export type twilioMessageTemplate = {
-    from: string;
-    contentSid: string;
-    contentVariables: string;
-    to: string;
-};
+type AppRouteHandler<R extends RouteConfig> = RouteHandler<R, AppBindings>;
 
 export const createTwillioWpMessageHandler: AppRouteHandler<
     CreateRoute
 > = async (c) => {
-    const messageTemplateData = c.req.valid('json');
+    const store = c.var.store;
     const twilioClient = c.var.twilioClient;
-
-    //in rpoduction sends the message to the provided Phone Number; in development send it to the set Phone Number
-    const whatsappNumberTo =
-        serverEnv.APP_ENV === 'production'
-            ? messageTemplateData.phone_number
-            : serverEnv.TEST_TWILIO_PHONE_NUMBER;
-
-    const twilioMessageTemplate: twilioMessageTemplate = {
-        from: `whatsapp:${serverEnv.TWILIO_PHONE_NUMBER}`,
-        contentSid: serverEnv.CONTENT_SIT_CREATE_MESSAGE,
-        contentVariables: JSON.stringify({
-            '1': messageTemplateData.date,
-            '2': messageTemplateData.time,
-        }),
-        to: `whatsapp:${whatsappNumberTo}`,
-    };
-    //create an entry in the db for that message (otimistic updates)
-
-    //check for user in the db
-    let storedUser = await c.var.store.users.getUser(whatsappNumberTo);
-
-    // no previous entry, create an entry
-    if (storedUser === null) {
-        storedUser = await c.var.store.users.createUser(whatsappNumberTo);
-    }
-    c.var.logger.debug('user entry created on db');
-
-    //get convertion
-    let conversation = await c.var.store.conversations.getOpenConversation(
-        storedUser.user_id,
-    );
-
-    if (conversation === null) {
-        conversation = await c.var.store.conversations.createConversation(
-            storedUser.user_id,
-        );
-    }
-
-    // store message initial message without having creates in Twilio (it creates the message in the DB without all the necessary information)
-    const initialMessage = await c.var.store.messages.createMessage(
-        conversation.conversation_id,
-        storedUser.user_id,
-        MessageDirection.OUTBOUND,
-        JSON.stringify(twilioMessageTemplate),
-        'PRE-QUEUE',
-        null,
-    );
+    const messagesPayload = c.req.valid('json');
 
     try {
-        // create twilio message in Twilio
-        const message = await createTwilioMessage(
+        const responsePayload = await sendWhatsappMessageToUser(
+            store,
             twilioClient,
-            whatsappNumberTo,
-            twilioMessageTemplate,
-        );
-
-        // update teh message with the additional infortion profided by the creating of the message on twilio
-        await c.var.store.messages.updateMessageDataByMessageId(
-            initialMessage.message_id,
-            MessageDirection.OUTBOUND,
-            message.payload.body,
-            message.payload.status,
-            message.payload.sid,
-        );
-
-        c.var.logger.debug(
-            { twilioResponse: message },
-            'Twilio response full payload',
+            messagesPayload,
         );
 
         return c.json(
             {
                 success: true,
-                message_status: message.payload.status,
-                body: message.payload.body,
-                sid: message.payload.sid,
+                messages: responsePayload,
             },
             200,
         );
-    } catch (e) {
-        try {
-            await c.var.store.messages.updateMessageDataByMessageId(
-                initialMessage.message_id,
-                MessageDirection.OUTBOUND,
-                JSON.stringify(twilioMessageTemplate),
-                'FAILED',
-                null,
-            );
-        } catch (dbErr) {
-            c.var.logger.error(
-                { dbErr, messageId: initialMessage.message_id },
-                'Failed to mark message as FAILED',
-            );
+    } catch (error) {
+        c.var.logger.error(error);
+        if (error instanceof TwilioErrors) {
+            throw new HTTPException(500, {
+                message: 'Internal Server Error: Twilio Error ',
+            });
         }
 
-        throw e; // IMPORTANT: keep the original Twilio error
+        throw new HTTPException(500, { message: 'Internal Server Error' });
     }
 };
 
@@ -131,10 +50,10 @@ export const twillioWpMessageStatusHandler: AppRouteHandler<
 
     c.var.logger.debug({ full_payload: body });
 
-    const data = await MessageStatusBodyRequestSchema.parse(body);
+    const data = MessageStatusBodyRequestSchema.parse(body);
 
-    await new Promise(r => setTimeout(r,20000))
-    
+    await new Promise((r) => setTimeout(r, 20000));
+
     const updated = await c.var.store.messages.updateMessageStatusBySid(
         data.MessageSid,
         data.MessageStatus,

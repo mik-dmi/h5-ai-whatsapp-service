@@ -3,8 +3,9 @@ import jsonContent, {
 } from '@/app/internal/shared/utils/json-content';
 import { createRoute } from '@hono/zod-openapi';
 import {
-    CreateMessageTemplateBodySchema,
-    CreateMessageTemplateResponseSchema,
+    CreateMessageResponseSchema,
+    CreateMessagesPayloadSchema,
+    CreateMessagesResponseSchema,
 } from './schema';
 import { AppErrorResponseSchema } from '@/app/internal/shared/errors/schema';
 import { TwilioErrorResponseSchema } from '@/app/internal/services/twilio/schema';
@@ -18,13 +19,13 @@ export const createTwillioWpMessage = createRoute({
     security: [{ BearerAuth: [] }],
     request: {
         body: jsonContentRequired(
-            CreateMessageTemplateBodySchema,
+            CreateMessagesPayloadSchema,
             'Creating messages on Twilion to send to Whatsapp users',
         ),
     },
     responses: {
         200: jsonContent(
-            CreateMessageTemplateResponseSchema,
+            CreateMessagesResponseSchema,
             'Endpoint to create Messages',
         ),
         400: jsonContent(TwilioErrorResponseSchema, 'Bad Request Errors'),
@@ -51,7 +52,7 @@ export const twillioWpMessageStatus = createRoute({
 
     responses: {
         200: jsonContent(
-            CreateMessageTemplateResponseSchema,
+            CreateMessageResponseSchema,
             'Endpoint to create Messages',
         ),
         400: jsonContent(TwilioErrorResponseSchema, 'Bad Request Errors'),

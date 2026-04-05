@@ -23,12 +23,26 @@ describe('Search Endpoint, ', () => {
 
         const res = await client.api.v1.createMessageTemplate.$post(
             {
-                json: {
-                    date: '11/12/2024',
-                    time: '11:00pm',
-                    phone_number: '12332234231',
-                    first_name: 'Mike_e',
-                },
+                json: [
+                    {
+                        first_name: 'Mike_e',
+                        last_name: 'Doe',
+                        wp_phone_number: '123456975322',
+                        template_sid: '233232323223',
+                        date: '11/12/2024',
+                        time: '11:00',
+                        location: 'Street example',
+                    },
+                    {
+                        first_name: 'Mary',
+                        last_name: 'Doe',
+                        wp_phone_number: '123246453222',
+                        template_sid: '38485W324334I32',
+                        date: '11/12/2024',
+                        time: '13:00',
+                        location: 'Street example',
+                    },
+                ],
             },
             {
                 headers: {
@@ -43,12 +57,26 @@ describe('Search Endpoint, ', () => {
     it('validate Authorization header when creating message', async () => {
         const res = await client.api.v1.createMessageTemplate.$post(
             {
-                json: {
-                    date: '11/12/2024',
-                    time: '11:00pm',
-                    phone_number: '12332234231',
-                    first_name: 'Mike_e',
-                },
+                json: [
+                    {
+                        first_name: 'Mike_e',
+                        last_name: 'Doe',
+                        wp_phone_number: '123456975322',
+                        template_sid: '233232323223',
+                        date: '11/12/2024',
+                        time: '11:00',
+                        location: 'Street example',
+                    },
+                    {
+                        first_name: 'Mary',
+                        last_name: 'Doe',
+                        wp_phone_number: '123246453222',
+                        template_sid: '38485W324334I32',
+                        date: '11/12/2024',
+                        time: '13:00',
+                        location: 'Street example',
+                    },
+                ],
             },
             {
                 headers: {
@@ -71,12 +99,26 @@ describe('Search Endpoint, ', () => {
 
         const res = await client.api.v1.createMessageTemplate.$post(
             {
-                json: {
-                    date: '11/12/2024',
-                    time: '11:00pm',
-                    phone_number: '12332234231',
-                    first_name: 'Mike_e',
-                },
+                json: [
+                    {
+                        first_name: 'Mike_e',
+                        last_name: 'Doe',
+                        wp_phone_number: '123456975322',
+                        template_sid: '233232323223',
+                        date: '11/12/2024',
+                        time: '11:00',
+                        location: 'Street example',
+                    },
+                    {
+                        first_name: 'Mary',
+                        last_name: 'Doe',
+                        wp_phone_number: '123246453222',
+                        template_sid: '38485W324334I32',
+                        date: '11/12/2024',
+                        time: '13:00',
+                        location: 'Street example',
+                    },
+                ],
             },
             {
                 headers: {
@@ -99,12 +141,27 @@ describe('Search Endpoint, ', () => {
 
         const res = await client.api.v1.createMessageTemplate.$post(
             {
-                // @ts-expect-error	there is one property missing from the json on purpose
-                json: {
-                    date: '11/12/2024',
-                    time: '11:00pm',
-                    phone_number: '12332234231',
-                },
+                json: [
+                    {
+                        first_name: 'Mike_e',
+                        wp_phone_number: '123246453222',
+                        // @ts-expect-error	there is one property missing from the json on purpose
+
+                        template_id: '233232323223',
+                        date: '11/12/2024',
+                        time: '11:00',
+                        location: 'Street example',
+                    },
+                    {
+                        first_name: 'Mary',
+                        last_name: 'Doe',
+                        wp_phone_number: '123246453222',
+                        template_sid: '38485W324334I32',
+                        date: '11/12/2024',
+                        time: '13:00',
+                        location: 'Street example',
+                    },
+                ],
             },
             {
                 headers: {

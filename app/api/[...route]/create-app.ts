@@ -11,7 +11,7 @@ import notFound from '@/app/internal/shared/middleware/not-found';
 import productionTwilioClient from '@/app/internal/services/twilio/twilio-clients/production-client';
 import prismTwilioClient from '@/app/internal/services/twilio/twilio-clients/prism-client/prism-twilio-client';
 import defaultHook from '@/app/internal/shared/utils/default-hook';
-import { NewPrismaStorage } from '@/app/internal/storage/store';
+import { createPrismaStorage } from '@/app/internal/storage/storage';
 import { prisma } from '@/app/internal/services/prisma/client';
 
 export function createRouter() {
@@ -55,7 +55,7 @@ export default function createApp() {
 
         c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`);
 
-        const store = NewPrismaStorage(prisma);
+        const store = createPrismaStorage(prisma);
 
         c.set('store', store);
 
@@ -66,7 +66,7 @@ export default function createApp() {
     app.use('*', bearerAuthMiddleware);
 
     // max time for routes to respond back
-    app.use('*', timeout(10000));
+    app.use('*', timeout(20000));
 
     app.notFound(notFound);
     app.onError(onError);

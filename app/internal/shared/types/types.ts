@@ -2,14 +2,14 @@ import { OpenAPIHono, z } from '@hono/zod-openapi';
 import { PinoLogger } from 'hono-pino';
 import { Twilio } from 'twilio';
 import z4 from 'zod/v4';
-import { Repositories } from '../../storage/store';
+import { Storage } from '../../storage/storage';
 
 //inject depencies that need to be availale in the
 export interface AppBindings {
     Variables: {
         logger: PinoLogger;
         twilioClient: Twilio;
-        store: Repositories;
+        store: Storage;
     };
 }
 export enum MessageDirection {
