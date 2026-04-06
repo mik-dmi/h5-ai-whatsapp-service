@@ -8,7 +8,6 @@ import {
     CreateMessagePayloadSchema,
     CreateMessageResponseSchema,
 } from '@/app/api/[...route]/twilio-whatapp-message/schema';
-import { MessageDirection } from '@/app/internal/shared/types/types';
 import { InMemoryQueue } from '@/app/internal/shared/queue/in-memory-queue';
 import { InMemoryQueueError } from '@/app/internal/shared/queue/erros';
 import { messages } from '@/prisma/generated/prisma';
@@ -22,88 +21,9 @@ export type TwilioMessageTemplateData = {
     to: string;
 };
 
-type BatchItemResult = {
-    index: number;
-    accepted: boolean;
-    messageId?: bigint;
-    error?: string;
-};
-
-type BatchResult = {
-    total: number;
-    acceptedCount: number;
-    failedCount: number;
-    results: BatchItemResult[];
-};
-
-type CreateMessageResponse = z.infer<typeof CreateMessageResponseSchema>;
+type BatchItemResult = z.infer<typeof CreateMessageResponseSchema>;
 
 export async function sendWhatsappMessageToUser(
-    store: Storage,
-    twilioClient: Twilio,
-    messagesPayload: UserMessagePayload[],
-) {
-    const responsePayload: CreateMessageResponse[] = [];
-
-    // store and add to in-memory queue all messages
-    const messagesBeforeTwilio = await initiateAllMessagesInDataBaseAndQueue(
-        store,
-        messagesPayload,
-    );
-
-    for (let i = 0; i < messagesPayload.length; i++) {
-        let messageBeforeTwilio;
-
-        const messagePayload = messagesPayload[i];
-
-        const twilioMessageTemplate = createTwilioTemplate(messagePayload);
-        try {
-            messageBeforeTwilio = await storeUserMessage(
-                store,
-                twilioMessageTemplate,
-            );
-
-            // Create Twilio message in Twilio
-            const message = await createTwilioMessage(
-                twilioClient,
-                twilioMessageTemplate,
-            );
-
-            // update the message with the additional information profided by the creation of the message on twilio
-            const updatedMessage =
-                await store.messages.updateMessageDataByMessageId(
-                    messageBeforeTwilio.message_id,
-                    MessageDirection.OUTBOUND,
-                    message.body,
-                    message.status,
-                    message.sid,
-                );
-
-            responsePayload.push({
-                success: true,
-                message_status: updatedMessage.message_status,
-                body: updatedMessage.message_text ?? '',
-                sid: updatedMessage.twilio_message_sid,
-            });
-        } catch (e) {
-            console.error('Error: ', e);
-
-            if (messageBeforeTwilio) {
-                await store.messages.updateMessageDataByMessageId(
-                    messageBeforeTwilio.message_id,
-                    MessageDirection.OUTBOUND,
-                    JSON.stringify(twilioMessageTemplate),
-                    'failed',
-                    null,
-                );
-            }
-        }
-    }
-
-    return responsePayload;
-}
-
-export async function initiateAllMessagesInDataBaseAndQueue(
     store: Storage,
     messagesPayload: UserMessagePayload[],
 ) {
@@ -115,7 +35,7 @@ export async function initiateAllMessagesInDataBaseAndQueue(
         );
     }
 
-    const results = [];
+    const results: BatchItemResult[] = [];
 
     for (let i = 0; i < messagesPayload.length; i++) {
         let storedMessage: messages | null = null;
@@ -128,10 +48,10 @@ export async function initiateAllMessagesInDataBaseAndQueue(
                 twilioMessageTemplate,
             );
 
-            InMemoryQueue.enqueue(storedMessage);
+            InMemoryQueue.enqueue(storedMessage.message_id);
 
             results.push({
-                index:i, 
+                index: i,
                 accepted: true,
                 messageId: storedMessage.message_id,
             });
@@ -145,17 +65,26 @@ export async function initiateAllMessagesInDataBaseAndQueue(
                     storedMessage.message_id,
                     null,
                     null,
-                    'failed_in_memory_queuing',
+                    'failed_to_queue',
                     null,
                 );
             }
             results.push({
-                index: i , 
+                index: i,
                 accepted: false,
                 error: error instanceof Error ? error.message : 'unknown error',
             });
         }
     }
+
+    return {
+        total: results.length,
+        acceptedCount: results.filter((result) => (result.accepted = true))
+            .length,
+        failedCount: results.filter((result) => (result.accepted = false))
+            .length,
+        results: results,
+    };
 }
 
 export function createTwilioTemplate(messagePayload: UserMessagePayload) {
@@ -175,47 +104,6 @@ export function createTwilioTemplate(messagePayload: UserMessagePayload) {
         to: `whatsapp:${whatsappNumberTo}`,
     };
     return twilioMessageTemplate;
-}
-
-export async function storeUserMessage(
-    store: Storage,
-    twilioMessageTemplate: TwilioMessageTemplateData,
-) {
-    const userWhatsappNumber = twilioMessageTemplate.to;
-
-    //check for user in the db
-    let storedUser = await store.users.getUser(userWhatsappNumber);
-
-    // no previous entry, create an entry
-    if (storedUser === null) {
-        storedUser = await store.users.createUser(userWhatsappNumber);
-    }
-
-    console.log('debug: user entry created on db');
-
-    //get conversation
-    let conversation = await store.conversations.getOpenConversation(
-        storedUser.user_id,
-    );
-
-    // no previous conversation, create an entry
-    if (conversation === null) {
-        conversation = await store.conversations.createConversation(
-            storedUser.user_id,
-        );
-    }
-
-    // store message initial message without having creates in Twilio (it creates the message in the DB without all the necessary information)
-    const initialMessage = await store.messages.createMessage(
-        conversation.conversation_id,
-        storedUser.user_id,
-        MessageDirection.OUTBOUND,
-        JSON.stringify(twilioMessageTemplate),
-        'pre_in_memory_queue',
-        null,
-    );
-
-    return initialMessage;
 }
 
 export async function createTwilioMessage(

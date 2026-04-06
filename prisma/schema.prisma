@@ -22,14 +22,14 @@ model conversations {
   is_open         Boolean?  @default(true)
   created_at      DateTime? @default(now()) @db.Timestamp(6)
   updated_at      DateTime? @updatedAt @db.Timestamp(6)
-
   user     users     @relation(fields: [user_id], references: [user_id])
   messages messages[]
 }
+
 enum MessageStatus {
   pre_in_memory_queue
-  in_memory_queued
-  failed_in_memory_queuing
+  failed_to_queue
+  processing
   queued
   sending
   sent

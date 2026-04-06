@@ -8,6 +8,6 @@ export const router = createRouter()
         handlers.createTwillioWpMessageHandler,
     )
     .openapi(
-        routes.twillioWpMessageStatus,
+        routes.GetTwillioMessageStatus,
         handlers.twillioWpMessageStatusHandler,
     );

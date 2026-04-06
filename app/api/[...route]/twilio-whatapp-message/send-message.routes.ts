@@ -3,9 +3,9 @@ import jsonContent, {
 } from '@/app/internal/shared/utils/json-content';
 import { createRoute } from '@hono/zod-openapi';
 import {
-    CreateMessageResponseSchema,
     CreateMessagesPayloadSchema,
     CreateMessagesResponseSchema,
+    GetTwillioMessageStatusResponseSchema,
 } from './schema';
 import { AppErrorResponseSchema } from '@/app/internal/shared/errors/schema';
 import { TwilioErrorResponseSchema } from '@/app/internal/services/twilio/schema';
@@ -24,7 +24,7 @@ export const createTwillioWpMessage = createRoute({
         ),
     },
     responses: {
-        200: jsonContent(
+        201: jsonContent(
             CreateMessagesResponseSchema,
             'Endpoint to create Messages',
         ),
@@ -40,7 +40,7 @@ export const createTwillioWpMessage = createRoute({
     },
 });
 
-export const twillioWpMessageStatus = createRoute({
+export const GetTwillioMessageStatus = createRoute({
     tags,
     method: 'post',
     path: '/postMessageStatus',
@@ -52,7 +52,7 @@ export const twillioWpMessageStatus = createRoute({
 
     responses: {
         200: jsonContent(
-            CreateMessageResponseSchema,
+            GetTwillioMessageStatusResponseSchema,
             'Endpoint to create Messages',
         ),
         400: jsonContent(TwilioErrorResponseSchema, 'Bad Request Errors'),
@@ -68,4 +68,4 @@ export const twillioWpMessageStatus = createRoute({
 });
 
 export type CreateRoute = typeof createTwillioWpMessage;
-export type StatusRoute = typeof twillioWpMessageStatus;
+export type StatusRoute = typeof GetTwillioMessageStatus;

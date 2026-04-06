@@ -12,23 +12,15 @@ export const createTwillioWpMessageHandler: AppRouteHandler<
     CreateRoute
 > = async (c) => {
     const store = c.var.store;
-    const twilioClient = c.var.twilioClient;
     const messagesPayload = c.req.valid('json');
 
     try {
         const responsePayload = await sendWhatsappMessageToUser(
             store,
-            twilioClient,
             messagesPayload,
         );
 
-        return c.json(
-            {
-                success: true,
-                messages: responsePayload,
-            },
-            200,
-        );
+        return c.json(responsePayload, 201);
     } catch (error) {
         c.var.logger.error(error);
         if (error instanceof TwilioErrors) {

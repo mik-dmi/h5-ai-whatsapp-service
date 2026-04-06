@@ -24,15 +24,17 @@ export const MessageStatusInTwilioSchema = z.enum(messageStatusInTwilio);
 export const MessageStatusInSupabaseSchema = z.enum(MessageStatusInDB);
 
 export const CreateMessageResponseSchema = z.object({
-    success: z.boolean(),
-    message_status: messageStatusInTwilio,
-    body: z.string().optional(), // or nullable depending on what you decided
-    sid: z.string().nullable(), //message identifi
+    index: z.number().min(0),
+    accepted: z.boolean(),
+    messageId: z.string().optional(),
+    error: z.string().optional(),
 });
 
 export const CreateMessagesResponseSchema = z.object({
-    success: z.boolean(),
-    messages: z.array(CreateMessageResponseSchema),
+    total: z.number(),
+    acceptedCount: z.number(),
+    failedCount: z.number(),
+    results: z.array(CreateMessageResponseSchema),
 });
 
 export const CreateMessagePayloadSchema = z.object({
@@ -55,3 +57,10 @@ export const MessageStatusBodyRequestSchema = z
         ErrorCode: z.string().optional(),
     })
     .loose(); // as it is what is recomended on Twilio docs
+
+export const GetTwillioMessageStatusResponseSchema = z.object({
+    success: z.boolean(),
+    message_status: MessageStatusInTwilioSchema,
+    body: z.string().optional(), // or nullable depending on what you decided
+    sid: z.string(), //twilio message sid
+});

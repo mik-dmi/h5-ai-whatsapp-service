@@ -27,9 +27,14 @@ export interface MessageRepository {
         messageStatus: MessageStatusInDB,
         twilioMessageSid: string | null,
     ): Promise<messages>;
-    getMessageBySid(messageSid: string): Promise<messages | null>;
+    getMessageByTwilioSid(twilioMessageSid: string): Promise<messages | null>;
+    getMessageByMessageId(messageId: string): Promise<messages | null>;
+    updateMessageStatusByMessageId(
+        messageId: string,
+        newMessageStatus: MessageStatusInDB,
+    ): Promise<boolean>;
     updateMessageStatusBySid(
-        messageSid: string,
+        twilioMessageSid: string,
         newMessageStatus: MessageStatusInDB,
     ): Promise<boolean>;
     updateMessageDataByMessageId(

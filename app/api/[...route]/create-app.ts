@@ -13,6 +13,7 @@ import prismTwilioClient from '@/app/internal/services/twilio/twilio-clients/pri
 import defaultHook from '@/app/internal/shared/utils/default-hook';
 import { createPrismaStorage } from '@/app/internal/storage/storage';
 import { prisma } from '@/app/internal/services/prisma/client';
+import { startWhatsappMessageWorker } from '@/app/internal/shared/queue/worker';
 
 export function createRouter() {
     return new OpenAPIHono<AppBindings>({
@@ -21,6 +22,13 @@ export function createRouter() {
     });
 }
 export default function createApp() {
+    const store = createPrismaStorage(prisma);
+
+    const twilioClient =
+        serverEnv.CONNECT_TO_TWILIO === true
+            ? productionTwilioClient
+            : prismTwilioClient;
+
     const app = createRouter().basePath('/api/v1');
     app.openAPIRegistry.registerComponent('securitySchemes', 'BearerAuth', {
         type: 'http',
@@ -43,19 +51,12 @@ export default function createApp() {
     app.use('*', async (c, next) => {
         //const twilioClient = serverEnv.APP_ENV === "production" ?  productionTwilioClient : prismTwilioClient
 
-        const twilioClient =
-            serverEnv.CONNECT_TO_TWILIO === true
-                ? productionTwilioClient
-                : prismTwilioClient;
-
         c.set('twilioClient', twilioClient);
         c.var.logger.debug(
             `twilioClient in ${serverEnv.APP_ENV} environment: ${twilioClient}`,
         );
 
         c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`);
-
-        const store = createPrismaStorage(prisma);
 
         c.set('store', store);
 
@@ -70,6 +71,8 @@ export default function createApp() {
 
     app.notFound(notFound);
     app.onError(onError);
+
+    startWhatsappMessageWorker(store, twilioClient);
 
     return app;
 }

@@ -29,19 +29,40 @@ export default class PrismaMessageRepository implements MessageRepository {
         });
     }
 
-    async getMessageBySid(messageSid: string): Promise<messages | null> {
+    async getMessageByTwilioSid(
+        twilioMessageSid: string,
+    ): Promise<messages | null> {
         return await this.prismaClient.messages.findUnique({
-            where: { twilio_message_sid: messageSid },
+            where: { twilio_message_sid: twilioMessageSid },
+        });
+    }
+    async getMessageByMessageId(messageId: string): Promise<messages | null> {
+        return await this.prismaClient.messages.findUnique({
+            where: { message_id: messageId },
         });
     }
 
-    async updateMessageStatusBySid(
-        messageSid: string,
+    async updateMessageStatusByMessageId(
+        messageId: string,
         messageStatus: MessageStatusInDB,
     ): Promise<boolean> {
         const res = await this.prismaClient.messages.updateMany({
             // updateMany and not just update as I dont want to send an error in case of there message not existing in the db
-            where: { twilio_message_sid: messageSid },
+            where: { message_id: messageId },
+            data: {
+                message_status: messageStatus,
+            },
+        });
+        return res.count > 0;
+    }
+
+    async updateMessageStatusBySid(
+        twilioMessageSid: string,
+        messageStatus: MessageStatusInDB,
+    ): Promise<boolean> {
+        const res = await this.prismaClient.messages.updateMany({
+            // updateMany and not just update as I dont want to send an error in case of there message not existing in the db
+            where: { twilio_message_sid: twilioMessageSid },
             data: {
                 message_status: messageStatus,
             },

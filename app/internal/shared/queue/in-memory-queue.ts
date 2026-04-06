@@ -76,9 +76,10 @@ class Queue<T> {
 
     public dequeue = () => {
         if (this.empty) {
-            console.warn('Cannot dequeue, queue is empty');
+            //console.warn('Cannot dequeue, queue is empty');
             return undefined;
         }
+
         const item = this.store[this.indexFront];
         this.store[this.indexFront] = undefined as unknown as T; // Clear the slot
         this.indexFront++;
@@ -112,8 +113,8 @@ class Queue<T> {
     }
 }
 
-export const InMemoryQueue = new Queue({
+export const InMemoryQueue = new Queue<string>({
     items: undefined,
-    cleanupThreshold: serverEnv.QUEUE_CLEANUP_THRESHOLD,
-    maxLength: serverEnv.QUEUE_MAX_LENGTH,
+    cleanupThreshold: Number(serverEnv.QUEUE_CLEANUP_THRESHOLD),
+    maxLength: Number(serverEnv.QUEUE_MAX_LENGTH),
 });
