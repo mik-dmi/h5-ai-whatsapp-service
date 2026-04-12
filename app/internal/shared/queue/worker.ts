@@ -50,7 +50,9 @@ export async function startWhatsappMessageWorker(
                 twilioMessage.status,
                 twilioMessage.sid,
             );
-            console.log(`Message ${messageData.message_id} is out of queue and in twilio with status:  ${twilioMessage.status} `);
+            console.log(
+                `Message ${messageData.message_id} is out of queue and in twilio with status:  ${twilioMessage.status} `,
+            );
         } catch (error) {
             console.error(
                 `failed processing queued message ${queuedMessageId}:`,
