@@ -44,7 +44,7 @@ export const twillioWpMessageStatusHandler: AppRouteHandler<
 
     const data = MessageStatusBodyRequestSchema.parse(body);
 
-    await new Promise((r) => setTimeout(r, 20000));
+    //await new Promise((r) => setTimeout(r, 20000));
 
     const updated = await c.var.store.messages.updateMessageStatusBySid(
         data.MessageSid,
