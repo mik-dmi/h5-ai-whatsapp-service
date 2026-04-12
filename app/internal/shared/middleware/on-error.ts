@@ -2,8 +2,8 @@ import type { ErrorHandler } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import serverEnv from '@/app/internal/shared/env/env.server';
 import { ZodError } from 'zod';
-import { TwilioErrors } from '../../services/twilio/errors/twilio-error';
 import { AppErrors } from '../errors/app-error';
+import { TwilioErrors } from '../../services/twilio/create-message/exeption';
 
 const onError: ErrorHandler = (err, c) => {
     const currentStatus =

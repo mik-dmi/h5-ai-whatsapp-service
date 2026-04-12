@@ -1,6 +1,5 @@
 import { Twilio } from 'twilio';
 import RestException from 'twilio/lib/base/RestException';
-import { TwilioErrors } from '../errors/twilio-error';
 import z from 'zod';
 import { Storage } from '@/app/internal/storage/storage';
 import serverEnv from '@/app/internal/shared/env/env.server';
@@ -11,6 +10,7 @@ import {
 import { InMemoryQueue } from '@/app/internal/shared/queue/in-memory-queue';
 import { InMemoryQueueError } from '@/app/internal/shared/queue/erros';
 import { messages } from '@/prisma/generated/prisma';
+import { TwilioErrors } from './exeption';
 
 type UserMessagePayload = z.infer<typeof CreateMessagePayloadSchema>;
 
@@ -25,10 +25,10 @@ type BatchItemResult = z.infer<typeof CreateMessageResponseSchema>;
 
 export async function sendWhatsappMessageToUser(
     store: Storage,
-    messagesPayload: UserMessagePayload[],
+    messagesToProcess: UserMessagePayload[],
 ) {
     //check if there is enough space left in the queue to enqueue all the message in the payload
-    if (InMemoryQueue.remainingCapacity - messagesPayload.length < 0) {
+    if (InMemoryQueue.remainingCapacity - messagesToProcess.length < 0) {
         throw new InMemoryQueueError(
             'user payload exceeds the queue remaining capacity',
             507,
@@ -37,15 +37,16 @@ export async function sendWhatsappMessageToUser(
 
     const results: BatchItemResult[] = [];
 
-    for (let i = 0; i < messagesPayload.length; i++) {
+    for (let i = 0; i < messagesToProcess.length; i++) {
         let storedMessage: messages | null = null;
         try {
-            const messagePayload = messagesPayload[i];
+            const messagePayload = messagesToProcess[i];
 
             const twilioMessageTemplate = createTwilioTemplate(messagePayload);
 
             storedMessage = await store.createOutboundMessageForQueue(
                 twilioMessageTemplate,
+                messagePayload.wp_phone_number,
             );
 
             InMemoryQueue.enqueue(storedMessage.message_id);
@@ -79,9 +80,9 @@ export async function sendWhatsappMessageToUser(
 
     return {
         total: results.length,
-        acceptedCount: results.filter((result) => (result.accepted = true))
+        acceptedCount: results.filter((result) => result.accepted === true)
             .length,
-        failedCount: results.filter((result) => (result.accepted = false))
+        failedCount: results.filter((result) => result.accepted === false)
             .length,
         results: results,
     };

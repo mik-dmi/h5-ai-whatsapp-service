@@ -24,7 +24,8 @@ export async function startWhatsappMessageWorker(
             const messageData =
                 await store.messages.getMessageByMessageId(queuedMessageId);
 
-            if (!messageData || messageData.message_text) {
+            if (!messageData || messageData.message_text == '') {
+                console.log('Message Data: ', messageData);
                 console.error(
                     `dequeue message does not have any data in the DB: message_id ${queuedMessageId}`,
                 );
@@ -49,6 +50,7 @@ export async function startWhatsappMessageWorker(
                 twilioMessage.status,
                 twilioMessage.sid,
             );
+            console.log(`Message ${messageData.message_id} is out of queue and in twilio with status:  ${twilioMessage.status} `);
         } catch (error) {
             console.error(
                 `failed processing queued message ${queuedMessageId}:`,

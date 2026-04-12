@@ -4,7 +4,7 @@ import { sendWhatsappMessageToUser } from '@/app/internal/services/twilio/create
 import type { CreateRoute, StatusRoute } from './send-message.routes';
 import { MessageStatusBodyRequestSchema } from './schema';
 import { HTTPException } from 'hono/http-exception';
-import { TwilioErrors } from '@/app/internal/services/twilio/errors/twilio-error';
+import { TwilioErrors } from '@/app/internal/services/twilio/create-message/exeption';
 
 type AppRouteHandler<R extends RouteConfig> = RouteHandler<R, AppBindings>;
 

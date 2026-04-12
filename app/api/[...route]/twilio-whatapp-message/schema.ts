@@ -42,7 +42,7 @@ export const CreateMessagePayloadSchema = z.object({
     first_name: z.string().max(30).min(2),
     last_name: z.string().max(30).min(2),
     wp_phone_number: z.string().max(20).min(9),
-    template_sid: z.string().max(30).min(9),
+    template_sid: z.string().max(50).min(9),
     time: z.string().max(15).min(2),
     location: z.string(),
 });

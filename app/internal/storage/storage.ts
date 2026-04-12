@@ -8,6 +8,7 @@ export type PrismaDBClient = PrismaClient | Prisma.TransactionClient;
 export interface Storage extends Repositories {
     createOutboundMessageForQueue(
         twilioMessageTemplate: TwilioMessageTemplateData,
+        whatsAppNumber: string,
     ): Promise<messages>;
 }
 

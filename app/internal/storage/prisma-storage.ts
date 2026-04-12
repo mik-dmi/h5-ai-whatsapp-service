@@ -25,15 +25,15 @@ export class PrismaStorage implements Storage {
 
     async createOutboundMessageForQueue(
         twilioMessageTemplate: TwilioMessageTemplateData,
+        whatsAppNumber: string,
     ): Promise<messages> {
         return this.prisma.$transaction(async (tx) => {
             const txRepos = createPrismaRepositories(tx);
-            const userWhatsappNumber = twilioMessageTemplate.to;
 
-            let storedUser = await txRepos.users.getUser(userWhatsappNumber);
+            let storedUser = await txRepos.users.getUser(whatsAppNumber);
 
             if (storedUser === null) {
-                storedUser = await txRepos.users.createUser(userWhatsappNumber);
+                storedUser = await txRepos.users.createUser(whatsAppNumber);
             }
 
             let conversation = await txRepos.conversations.getOpenConversation(

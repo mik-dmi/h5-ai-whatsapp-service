@@ -5924,7 +5924,7 @@ export namespace Prisma {
         message_id?: string;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
         conversation: conversationsCreateNestedOneWithoutMessagesInput;
@@ -5937,7 +5937,7 @@ export namespace Prisma {
         user_id?: string | null;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
     };
@@ -5980,7 +5980,7 @@ export namespace Prisma {
         user_id?: string | null;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
     };
@@ -6978,7 +6978,7 @@ export namespace Prisma {
         message_id?: string;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
         conversation: conversationsCreateNestedOneWithoutMessagesInput;
@@ -6989,7 +6989,7 @@ export namespace Prisma {
         conversation_id: string;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
     };
@@ -7129,7 +7129,7 @@ export namespace Prisma {
         message_id?: string;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
         user?: usersCreateNestedOneWithoutMessagesInput;
@@ -7140,7 +7140,7 @@ export namespace Prisma {
         user_id?: string | null;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
     };
@@ -7375,7 +7375,7 @@ export namespace Prisma {
         conversation_id: string;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
     };
@@ -7430,7 +7430,7 @@ export namespace Prisma {
         user_id?: string | null;
         direction?: string | null;
         message_text?: string | null;
-        message_status: $Enums.MessageStatus;
+        message_status?: $Enums.MessageStatus;
         twilio_message_sid?: string | null;
         created_at?: Date | string;
     };

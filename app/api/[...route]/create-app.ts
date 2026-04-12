@@ -43,20 +43,27 @@ export default function createApp() {
             ),
             http: {
                 reqId: () => crypto.randomUUID(),
+                onReqBindings: (c) => ({
+                    req: {
+                        url: c.req.path,
+                        method: c.req.method,
+                    },
+                }),
+                onResBindings: (c) => ({
+                    res: {
+                        status: c.res.status,
+                    },
+                }),
             },
         }),
     );
 
-    //adding twilio and prisma client as a dependency to an app
     app.use('*', async (c, next) => {
-        //const twilioClient = serverEnv.APP_ENV === "production" ?  productionTwilioClient : prismTwilioClient
-
         c.set('twilioClient', twilioClient);
-        c.var.logger.debug(
-            `twilioClient in ${serverEnv.APP_ENV} environment: ${twilioClient}`,
-        );
 
-        c.var.logger.debug(`Prism URL : ${serverEnv.PRISM_URL}`);
+        c.var.logger.debug(
+            `twilioClient in ${serverEnv.APP_ENV} environment and Prism URL : ${serverEnv.PRISM_URL}`,
+        );
 
         c.set('store', store);
 
